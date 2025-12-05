@@ -496,9 +496,8 @@ public class UsuarioController {
         }
     }
     
-    @GetMapping("busqueda")
-    @ResponseBody // retorna un dato estructurado
-    public Result Busqueda(){
+    @PostMapping("busqueda")
+    public String Busqueda(){
         Usuario usuario = new Usuario();
         usuario.setNombre("");
         usuario.setApellidoPaterno("");
@@ -506,6 +505,6 @@ public class UsuarioController {
         usuario.Rol = new Rol();
         usuario.Rol.setIdRol(21);
         Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
-        return result;
+        return "Index";
     }
 }
