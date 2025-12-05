@@ -1,0 +1,3 @@
+Username | Nombre | ApellidoPaterno | ApellidoMaterno | Email | Password | Fecha de Nacimiento | Sexo | Telefono | Celular | Curp | IDROl
+juan123|Juan|Martinez|Lopez|juan@gmail.com|Pass123$|1998-05-15|H|5512345678|5512345678|MALJ980515HDFLPN01|0
+12maria456|Ma|Lopez|Garcia|maria@gmail.com|pass123|1998-05-15|M|55123345||MALJ980PN01|3

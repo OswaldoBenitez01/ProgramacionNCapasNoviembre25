@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Listado de Usuarios</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
+    <body class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-secondary">Usuarios</h2>
+
+            <div th:if="${MensajeExito} != null"
+                 class="alert alert-info alert-dismissible fade show"
+                 role="alert">
+                <i class="bi bi-check-circle-fill"></i>
+                <strong>Exito! </strong><span th:text="${MensajeExito}"></span>                
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${MensajeError} != null"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                <i class="bi bi-check-circle-fill"></i>
+                <strong>Oh no! </strong><span th:text="${MensajeError}"></span>                
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="btn-group">
+                <a th:href="@{/Usuario/form}" class="btn btn-success">
+                    <i class="bi bi-person-plus-fill"></i> Agregar Usuario
+                </a>
+                <a th:href="@{/Usuario/CargaMasiva}" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-arrow-up"></i> Cargar archivo
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive rounded-2 shadow">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre / ID</th>
+                        <th>Informacion</th>
+                        <th>Contacto</th>
+                        <th>Direcciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${Usuarios}">
+                        <!--ACCIONES-->
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a th:href="@{/Usuario/detail/{IdUsuario} (IdUsuario = ${usuario.IdUsuario})}" 
+                                   class="btn btn-outline-warning btn-sm rounded-pill me-2" title="Ver detalle">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a> 
+                                <button th:onclick="|EliminarUsuario(${usuario.IdUsuario})|"
+                                        class="btn btn-outline-danger btn-sm rounded-pill me-2" title="Eliminar">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                                <!--<a th:href="@{/Usuario/delete/{IdUsuario} (IdUsuario = ${usuario.IdUsuario})}"
+                                        class="btn btn-outline-danger btn-sm rounded-pill me-2" title="Eliminar">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </a> -->
+                            </div>
+                        </td>
+
+                        <!--NOMBRE-->
+                        <td>
+                            <div class="fw-bold text-dark mb-1">
+                                <span class="badge bg-primary">ID: <span th:text="${usuario.IdUsuario}"></span></span>
+                                <br>
+                                <span th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></span>
+                            </div>
+                            <div class="text-secondary small">
+                                <i class="bi bi-person"></i> <span th:text="${usuario.Username}"></span>
+                            </div>
+                        </td>
+
+                        <!--iNFORMAICON-->
+                        <td>
+                            <div class="mb-1 small">
+                                <i class="bi bi-calendar"></i> Nacimiento: <span th:text="${usuario.FechaNacimiento}"></span><br>
+                                <i class="bi bi-gender-ambiguous"></i> Sexo: <span th:text="${usuario.Sexo}"></span></span>
+                            </div>
+                            <div class="mb-1 small">
+                                <i class="bi bi-shield-check"></i> CURP:
+                                <span th:if="${usuario.Curp != null}" th:text="${usuario.Curp}"></span>
+                                <span th:unless="${usuario.Curp != null}" class="text-danger">No hay CURP</span>
+                            </div>
+                            <div class="small">
+                                <i class="bi bi-person-badge"></i> <span class="fw-bold">Rol: </span>
+                                <span class="text-primary" th:text="${usuario.Rol.Nombre}"></span>
+                            </div>
+                        </td>
+                        <!-- CONTACTO -->
+                        <td>
+                            <div class="mb-1 small">
+                                <i class="bi bi-envelope"></i> Email: 
+                                <span class="text-primary" th:text="${usuario.Email}"></span>
+                            </div>
+                            <div class="mb-1 small">
+                                <i class="bi bi-phone"></i> Celular: 
+                                <span th:if="${usuario.Celular != null}" th:text="${usuario.Celular}"></span>
+                                <span th:unless="${usuario.Celular != null}" class="text-danger">No registrado</span>
+                            </div>
+                            <div class="mb-1 small">
+                                <i class="bi bi-telephone"></i> Telefono: 
+                                <span th:text="${usuario.Telefono}"></span>
+                            </div>
+                        </td>
+                        <!-- DIRECCIONES -->
+                        <td>
+                            <ul class="mb-0 ps-3 small " th:if="${usuario.Direcciones != null}">
+
+                                <li class="list-group-item" th:each="direccion : ${usuario.Direcciones}" >
+                                    <i class="bi bi-geo"></i>
+                                    <span class="fw-bold" th:text="|${direccion.Calle} ${direccion.NumeroInterior} ${direccion.NumeroExterior}, 
+                                          ${direccion.Colonia.Nombre}|"></span> <br>
+                                    <span class="ms-3 text-secondary" th:text="|${direccion.Colonia.Municipio.Nombre}, 
+                                          ${direccion.Colonia.Municipio.Estado.Nombre} , 
+                                          ${direccion.Colonia.Municipio.Estado.Pais.Nombre}|"></span>
+                                </li>
+                            </ul>
+                            <div class="text-muted small" th:unless="${usuario.Direcciones != null}">Sin direcciones</div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!--
+         ====== EVENTOS ======
+        -->
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                animation: true,
+                position: "bottom-start",
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 6000,
+                timerProgressBar: true,
+                theme: 'dark',
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            function EliminarUsuario(IdUsuario) {
+                Swal.fire({
+                    title: "Estas seguro de eliminar al usuario?",
+                    text: "No podras revertir esta accion!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, eliminar!",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/Usuario/delete/" + IdUsuario;
+                    }
+                });
+            }
+        </script>
+        
+        <!--
+         ====== ALERTAS ======
+        -->
+        <script th:if="${resultDelete}" th:inline="javascript">
+            console.log([[${resultDelete}]]);
+            if ([[${resultDelete.Correct}]]){
+                Toast.fire({
+                    icon: "success",
+                    title: [[${resultDelete.Object}]]
+                });
+            } else {
+                Toast.fire({
+                    icon: "error",
+                    title: [[${resultDelete.Object}]]
+                });
+            }
+        </script>
+        <script th:if="${resultAddUserFull}" th:inline="javascript">
+            console.log([[${resultAddUserFull}]]);
+            if ([[${resultAddUserFull.Correct}]]){
+                Toast.fire({
+                    icon: "success",
+                    title: [[${resultAddUserFull.Object}]]
+                });
+            } else {
+                Toast.fire({
+                    icon: "error",
+                    title: [[${resultAddUserFull.Object}]]
+                });
+            }
+        </script>
+         
+        <script th:if="${resultCargaMasiva}" th:inline="javascript">
+            console.log([[${resultCargaMasiva}]]);
+            if ([[${resultCargaMasiva.Correct}]]){
+                Toast.fire({
+                    icon: "success",
+                    title: [[${resultCargaMasiva.Object}]]
+                });
+            } else {
+                Toast.fire({
+                    icon: "error",
+                    title: [[${resultCargaMasiva.Object}]]
+                });
+            }
+        </script>
+
+    </body>
+</html>
