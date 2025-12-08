@@ -67,6 +67,11 @@ public class UsuarioController {
     
         Result result = usuarioDAOImplementation.GetAll();
         model.addAttribute("Usuarios", result.Objects);
+        model.addAttribute("usuarioBusqueda", new Usuario());
+        
+        //Roles
+        Result resultRoles = rolDAOImplementation.GetALl();
+        model.addAttribute("Roles", resultRoles.Objects);
         return "Index";
     }
     
@@ -497,14 +502,17 @@ public class UsuarioController {
     }
     
     @PostMapping("busqueda")
-    public String Busqueda(){
-        Usuario usuario = new Usuario();
-        usuario.setNombre("");
-        usuario.setApellidoPaterno("");
-        usuario.setApellidoMaterno("");
-        usuario.Rol = new Rol();
-        usuario.Rol.setIdRol(21);
+    public String Busqueda(@ModelAttribute("usuario") Usuario usuario, Model model){
         Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
+        if (result.Correct) {
+            model.addAttribute("Usuarios", result.Objects);
+        } else {
+            Result resultAll = usuarioDAOImplementation.GetAll();
+            model.addAttribute("Usuarios", resultAll.Objects);
+        }
+        model.addAttribute("usuarioBusqueda", usuario);
+        Result resultRoles = rolDAOImplementation.GetALl();
+        model.addAttribute("Roles", resultRoles.Objects);
         return "Index";
     }
 }

@@ -8,14 +8,14 @@ import jakarta.validation.constraints.Min;
 public class Rol {
     @Min(value = 1, message = "El valor del ID debe ser mayot o igual a 1")
     @Max(value = 10, message = "El valor del ID debe ser menor o igual a 10")
-    private int IdRol;
+    private Integer IdRol;
     private String Nombre;
 
-    public int getIdRol() {
+    public Integer getIdRol() {
         return IdRol;
     }
 
-    public void setIdRol(int IdRol) {
+    public void setIdRol(Integer IdRol) {
         this.IdRol = IdRol;
     }
 
@@ -26,6 +26,6 @@ public class Rol {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
-    
+
     
 }
