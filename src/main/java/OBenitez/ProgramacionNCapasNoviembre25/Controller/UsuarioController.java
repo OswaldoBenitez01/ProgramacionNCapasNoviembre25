@@ -503,16 +503,23 @@ public class UsuarioController {
     
     @PostMapping("busqueda")
     public String Busqueda(@ModelAttribute("usuario") Usuario usuario, Model model){
+        
         Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
-        if (result.Correct) {
-            model.addAttribute("Usuarios", result.Objects);
-        } else {
-            Result resultAll = usuarioDAOImplementation.GetAll();
-            model.addAttribute("Usuarios", resultAll.Objects);
+        
+        if (!result.Correct) {
+            result = usuarioDAOImplementation.GetAll();
         }
+        
+        if (result.Objects == null || result.Objects.isEmpty()) {
+            model.addAttribute("mensajeBusqueda", true);
+        }
+        
+        model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("usuarioBusqueda", usuario);
+        
         Result resultRoles = rolDAOImplementation.GetALl();
         model.addAttribute("Roles", resultRoles.Objects);
+        
         return "Index";
     }
 }
