@@ -519,6 +519,32 @@
             
             
             $(document).ready(function () {
+
+                if ($('#ddlpais').val() > 0) {
+                    console.log("El select pais tiene un valor de " + $('#ddlpais').val());
+                    $("#ddlpais").addClass("is-valid");
+                    $.ajax({
+                        url: "/Usuario/getEstadosByPais/" + $("#ddlpais").val(),
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Correct) {
+                                $("#ddlestado").empty();
+                                $("#ddlestado").append("<option value=0 selected>Selecciona un Estado</option>");
+                                $.each(data.Objects, function (i, estado) {
+                                    $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>");
+                                });
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert("Something went wrong :c");
+                        }
+                    });
+                    console.log($("#ddlestado").val());
+                } else {
+                    console.log("El select está vacío o solo tiene un placeholder.");
+                }
+                
                 
                 //DDL PAIS
                 $("#ddlpais").change(function () {

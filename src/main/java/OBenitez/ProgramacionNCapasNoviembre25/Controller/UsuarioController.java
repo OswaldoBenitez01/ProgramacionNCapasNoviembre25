@@ -7,6 +7,7 @@ import OBenitez.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.RolDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioDAOImplementation;
+import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioJPADAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Colonia;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Direccion;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.ErrorCarga;
@@ -62,12 +63,19 @@ public class UsuarioController {
     @Autowired
     private ValidationService validationService;
     
+    //Inyecciones del JPA
+    @Autowired
+    private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
+    
+    
     @GetMapping
     public String GetAll(Model model){ // resultDelete
     
         Result result = usuarioDAOImplementation.GetAll();
         model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("usuarioBusqueda", new Usuario());
+        
+        usuarioJPADAOImplementation.GetAll();
         
         //Roles
         Result resultRoles = rolDAOImplementation.GetALl();
