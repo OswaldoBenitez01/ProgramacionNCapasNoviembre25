@@ -71,11 +71,12 @@ public class UsuarioController {
     @GetMapping
     public String GetAll(Model model){ // resultDelete
     
-        Result result = usuarioDAOImplementation.GetAll();
+        //Result result = usuarioDAOImplementation.GetAll();
+        Result result = usuarioJPADAOImplementation.GetAll();
         model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("usuarioBusqueda", new Usuario());
         
-        usuarioJPADAOImplementation.GetAll();
+        //usuarioJPADAOImplementation.GetAll();
         
         //Roles
         Result resultRoles = rolDAOImplementation.GetALl();
