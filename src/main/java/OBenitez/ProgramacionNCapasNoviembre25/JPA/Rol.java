@@ -22,4 +22,20 @@ public class Rol {
 
     //GETTER Y SETTERS
 
+    public Integer getIdRol() {
+        return IdRol;
+    }
+
+    public void setIdRol(Integer IdRol) {
+        this.IdRol = IdRol;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+    
 }

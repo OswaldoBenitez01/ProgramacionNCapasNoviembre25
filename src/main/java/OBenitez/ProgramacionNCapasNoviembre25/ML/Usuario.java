@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.sql.Date;
 import java.util.List;
 
 public class Usuario {
@@ -38,9 +39,8 @@ public class Usuario {
     @Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W]).{8,64})", message = "La contraseña debe contener; un numero, una letra mayuscula, un caracter especial y una longitud de 8 caracteres")
     private String Password;
     
-    @NotEmpty(message = "El campo es obligatorio.")
-    @Pattern(regexp = "^(19[0-9]{2}|2[0-9]{3})-(0[1-9]|1[012])-([123]0|[012][1-9]|31)$", message = "La fecha debe tener un formato: YYYY-MM-DD")
-    private String FechaNacimiento;
+    @NotNull(message = "El campo es obligatorio.")
+    private Date FechaNacimiento;
     
     @NotEmpty(message = "El campo es obligatorio.")
     @Pattern(regexp = "^[HMN]$", message = "Ingresa un caracter valido: H - Hombre/M- Mujer/N - No definido")
@@ -119,14 +119,14 @@ public class Usuario {
         this.Password = Password;
     }
 
-    public String getFechaNacimiento() {
+    public Date getFechaNacimiento() {
         return FechaNacimiento;
     }
 
-    public void setFechaNacimiento(String FechaNacimiento) {
+    public void setFechaNacimiento(Date FechaNacimiento) {
         this.FechaNacimiento = FechaNacimiento;
     }
-
+    
     public String getSexo() {
         return Sexo;
     }

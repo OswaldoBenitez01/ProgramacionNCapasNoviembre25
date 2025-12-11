@@ -21,4 +21,21 @@ public class Pais {
     private String Nombre;
     
     //GETTERS Y SETTERS
+
+    public int getIdPais() {
+        return IdPais;
+    }
+
+    public void setIdPais(int IdPais) {
+        this.IdPais = IdPais;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+    
 }

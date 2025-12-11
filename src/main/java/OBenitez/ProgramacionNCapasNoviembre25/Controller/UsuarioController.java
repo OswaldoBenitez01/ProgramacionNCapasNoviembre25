@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,8 +77,6 @@ public class UsuarioController {
         Result result = usuarioJPADAOImplementation.GetAll();
         model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("usuarioBusqueda", new Usuario());
-        
-        //usuarioJPADAOImplementation.GetAll();
         
         //Roles
         Result resultRoles = rolDAOImplementation.GetALl();
@@ -238,7 +238,12 @@ public class UsuarioController {
     
         if(usuario.getIdUsuario()== 0){
             // AGREGAR USUARIO FULL INFO
-            Result result = usuarioDAOImplementation.Add(usuario);
+            
+            ModelMapper modelMapper = new ModelMapper();
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
+            
+            //Result result2 = usuarioDAOImplementation.Add(usuario);
+            Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
             
             if(result.Correct){
                 result.Object = "El usuario se agrego correctamente";
@@ -343,7 +348,7 @@ public class UsuarioController {
                 usuario.setApellidoMaterno(datos[3]);
                 usuario.setEmail(datos[4]);
                 usuario.setPassword(datos[5]);
-                usuario.setFechaNacimiento(datos[6]);
+                usuario.setFechaNacimiento(java.sql.Date.valueOf(datos[6]));
                 usuario.setSexo(datos[7]);
                 usuario.setTelefono(datos[8]);
                 usuario.setCelular(datos[9]);
@@ -397,7 +402,7 @@ public class UsuarioController {
                 usuario.setApellidoMaterno(row.getCell(3).toString());
                 usuario.setEmail(row.getCell(4).toString());
                 usuario.setPassword(row.getCell(5).toString());
-                usuario.setFechaNacimiento(row.getCell(6).getLocalDateTimeCellValue().toString().split("T")[0]);
+                usuario.setFechaNacimiento((Date) row.getCell(6).getDateCellValue());
                 usuario.setSexo(row.getCell(7).toString());
                 usuario.setCelular(row.getCell(8).toString());
                 usuario.setTelefono(row.getCell(9).toString());

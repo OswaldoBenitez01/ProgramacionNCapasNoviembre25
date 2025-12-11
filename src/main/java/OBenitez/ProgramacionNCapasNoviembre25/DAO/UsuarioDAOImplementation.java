@@ -9,6 +9,7 @@ import OBenitez.ProgramacionNCapasNoviembre25.ML.Pais;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Result;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Rol;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,8 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuario.setNombre(resultSet.getString("Nombre"));
                         usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                         usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
-                        usuario.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
+                        Date fecha = resultSet.getDate("FechaNacimiento");
+                        usuario.setFechaNacimiento(fecha);
                         usuario.setEmail(resultSet.getString("Email"));
                         usuario.setPassword(resultSet.getString("Password"));
                         usuario.setUsername(resultSet.getString("Username"));
@@ -142,7 +144,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.setString(1, usuario.getNombre());
                 callableStatement.setString(2, usuario.getApellidoPaterno());
                 callableStatement.setString(3, usuario.getApellidoMaterno());
-                callableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+                //callableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
                 callableStatement.setString(5, usuario.getEmail());
                 callableStatement.setString(6, usuario.getPassword());
                 
@@ -222,7 +224,8 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuario.setNombre(resultSet.getString("Nombre"));
                         usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                         usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
-                        usuario.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
+                        Date fecha = resultSet.getDate("FechaNacimiento");
+                        usuario.setFechaNacimiento(fecha);
                         usuario.setEmail(resultSet.getString("Email"));
                         usuario.setPassword(resultSet.getString("Password"));
                         usuario.setUsername(resultSet.getString("Username"));
@@ -298,7 +301,8 @@ public class UsuarioDAOImplementation implements IUsuario{
                     usuario.setNombre(resultSet.getString("Nombre"));
                     usuario.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                     usuario.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
-                    usuario.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
+                    Date fecha = resultSet.getDate("FechaNacimiento");
+                    usuario.setFechaNacimiento(fecha);
                     usuario.setEmail(resultSet.getString("Email"));
                     usuario.setPassword(resultSet.getString("Password"));
                     usuario.setUsername(resultSet.getString("Username"));
@@ -400,7 +404,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.setString(2,usuario.getNombre());
                 callableStatement.setString(3,usuario.getApellidoPaterno());
                 callableStatement.setString(4,usuario.getApellidoMaterno());
-                callableStatement.setDate(5, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+                callableStatement.setDate(5, (java.sql.Date) usuario.getFechaNacimiento());
                 callableStatement.setString(6, usuario.getEmail());
                 callableStatement.setString(7, usuario.getPassword());
                 callableStatement.setInt(8, usuario.Rol.getIdRol());
@@ -539,7 +543,8 @@ public class UsuarioDAOImplementation implements IUsuario{
                 CallableStatement.setString(1, usuario.getNombre());
                 CallableStatement.setString(2, usuario.getApellidoPaterno());
                 CallableStatement.setString(3, usuario.getApellidoMaterno());
-                CallableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+                //CallableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+                CallableStatement.setDate(5, (java.sql.Date) usuario.getFechaNacimiento());
                 CallableStatement.setString(5, usuario.getEmail());
                 CallableStatement.setString(6, usuario.getPassword());
                 
@@ -621,7 +626,9 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuarioResult.setNombre(resultSet.getString("Nombre"));
                         usuarioResult.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                         usuarioResult.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
-                        usuarioResult.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
+                        //usuarioResult.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
+                        Date fecha = resultSet.getDate("FechaNacimiento");
+                        usuarioResult.setFechaNacimiento(fecha);
                         usuarioResult.setEmail(resultSet.getString("Email"));
                         usuarioResult.setPassword(resultSet.getString("Password"));
                         usuarioResult.setUsername(resultSet.getString("Username"));

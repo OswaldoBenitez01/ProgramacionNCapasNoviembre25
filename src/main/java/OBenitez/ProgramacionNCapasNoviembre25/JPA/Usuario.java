@@ -11,6 +11,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idusuario")
-    private int IdUsuario;
+    private Integer IdUsuario;
     
     @Column(name = "username")
     private String Username;
@@ -42,7 +45,8 @@ public class Usuario {
     private String Password;
     
     @Column(name = "fechanacimiento")
-    private String FechaNacimiento;
+    @Temporal(TemporalType.DATE)
+    private Date FechaNacimiento;
     
     @Column(name = "sexo")
     private String Sexo;
@@ -60,10 +64,122 @@ public class Usuario {
     @JoinColumn(name = "idrol")
     public Rol Rol;
     
-    @OneToMany(mappedBy = "Usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "Usuario")
     public List<Direccion> Direcciones = new ArrayList<>();
 
-    
     //GETTERS Y SETTERS
 
+    public Integer getIdUsuario() {
+        return IdUsuario;
+    }
+
+    public void setIdUsuario(Integer IdUsuario) {
+        this.IdUsuario = IdUsuario;
+    }
+
+    public String getUsername() {
+        return Username;
+    }
+
+    public void setUsername(String Username) {
+        this.Username = Username;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+
+    public String getApellidoPaterno() {
+        return ApellidoPaterno;
+    }
+
+    public void setApellidoPaterno(String ApellidoPaterno) {
+        this.ApellidoPaterno = ApellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return ApellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String ApellidoMaterno) {
+        this.ApellidoMaterno = ApellidoMaterno;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String Email) {
+        this.Email = Email;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String Password) {
+        this.Password = Password;
+    }
+
+    public Date getFechaNacimiento() {
+        return FechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date FechaNacimiento) {
+        this.FechaNacimiento = FechaNacimiento;
+    }
+
+    
+    
+    public String getSexo() {
+        return Sexo;
+    }
+
+    public void setSexo(String Sexo) {
+        this.Sexo = Sexo;
+    }
+
+    public String getTelefono() {
+        return Telefono;
+    }
+
+    public void setTelefono(String Telefono) {
+        this.Telefono = Telefono;
+    }
+
+    public String getCelular() {
+        return Celular;
+    }
+
+    public void setCelular(String Celular) {
+        this.Celular = Celular;
+    }
+
+    public String getCurp() {
+        return Curp;
+    }
+
+    public void setCurp(String Curp) {
+        this.Curp = Curp;
+    }
+
+    public Rol getRol() {
+        return Rol;
+    }
+
+    public void setRol(Rol Rol) {
+        this.Rol = Rol;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return Direcciones;
+    }
+
+    public void setDirecciones(List<Direccion> Direcciones) {
+        this.Direcciones = Direcciones;
+    }
 }
