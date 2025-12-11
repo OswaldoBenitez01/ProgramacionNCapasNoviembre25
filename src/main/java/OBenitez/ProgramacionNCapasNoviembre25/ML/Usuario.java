@@ -8,7 +8,7 @@ import java.sql.Date;
 import java.util.List;
 
 public class Usuario {
-    private int IdUsuario;
+    private Integer IdUsuario;
     
     //@NotNull(message = "El campo es obligatorio.")
     @NotEmpty(message = "El campo es obligatorio.")
@@ -59,15 +59,17 @@ public class Usuario {
     @NotEmpty(message = "El campo es obligatorio.")
     @Pattern(regexp = "[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}", message = "Introduce un CURP Mexicano valido")
     private String Curp;
+    
+    private int Status;
 
     public Rol Rol;
     public List<Direccion> Direcciones;
 
-    public int getIdUsuario() {
+    public Integer getIdUsuario() {
         return IdUsuario;
     }
 
-    public void setIdUsuario(int IdUsuario) {
+    public void setIdUsuario(Integer IdUsuario) {
         this.IdUsuario = IdUsuario;
     }
 
@@ -159,6 +161,16 @@ public class Usuario {
         this.Curp = Curp;
     }
 
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int Status) {
+        this.Status = Status;
+    }
+
+    
+    
     public Rol getRol() {
         return Rol;
     }

@@ -144,7 +144,11 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.setString(1, usuario.getNombre());
                 callableStatement.setString(2, usuario.getApellidoPaterno());
                 callableStatement.setString(3, usuario.getApellidoMaterno());
-                //callableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+                
+                java.util.Date utilDate = usuario.getFechaNacimiento();
+                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+                callableStatement.setDate(4,sqlDate);
+                
                 callableStatement.setString(5, usuario.getEmail());
                 callableStatement.setString(6, usuario.getPassword());
                 
@@ -543,8 +547,12 @@ public class UsuarioDAOImplementation implements IUsuario{
                 CallableStatement.setString(1, usuario.getNombre());
                 CallableStatement.setString(2, usuario.getApellidoPaterno());
                 CallableStatement.setString(3, usuario.getApellidoMaterno());
-                //CallableStatement.setDate(4, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
-                CallableStatement.setDate(5, (java.sql.Date) usuario.getFechaNacimiento());
+                
+                java.util.Date utilDate = usuario.getFechaNacimiento();
+                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+                CallableStatement.setDate(4, sqlDate);
+                
                 CallableStatement.setString(5, usuario.getEmail());
                 CallableStatement.setString(6, usuario.getPassword());
                 
@@ -626,7 +634,6 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuarioResult.setNombre(resultSet.getString("Nombre"));
                         usuarioResult.setApellidoPaterno(resultSet.getString("ApellidoPaterno"));
                         usuarioResult.setApellidoMaterno(resultSet.getString("ApellidoMaterno"));
-                        //usuarioResult.setFechaNacimiento(resultSet.getString("FechaNacimiento"));
                         Date fecha = resultSet.getDate("FechaNacimiento");
                         usuarioResult.setFechaNacimiento(fecha);
                         usuarioResult.setEmail(resultSet.getString("Email"));
@@ -636,6 +643,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuarioResult.setTelefono(resultSet.getString("Telefono"));
                         if (resultSet.getString("Celular") != null) {usuarioResult.setCelular(resultSet.getString("Celular"));}
                         if (resultSet.getString("Curp") != null) {usuarioResult.setCurp(resultSet.getString("Curp"));}
+                        usuarioResult.setStatus(resultSet.getInt("Status"));
                         //ROL
                         usuarioResult.Rol = new Rol();
                         usuarioResult.Rol.setIdRol(resultSet.getInt("IdRol"));
@@ -676,6 +684,30 @@ public class UsuarioDAOImplementation implements IUsuario{
 
                 return true;
             });
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+
+    @Override
+    public Result UpdateStatusById(Integer IdUsuario, Integer status) {
+        Result result = new Result();
+        
+        try {
+            
+            result.Correct = jdbcTemplate.execute("{CALL UpdateUserStatusById(?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+                
+                callableStatement.setInt(1, IdUsuario);
+                callableStatement.setInt(2, status);
+                callableStatement.executeUpdate();
+                
+               return true; 
+            });
+            
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();

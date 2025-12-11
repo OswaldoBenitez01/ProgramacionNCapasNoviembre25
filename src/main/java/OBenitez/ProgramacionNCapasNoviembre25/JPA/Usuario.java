@@ -1,7 +1,6 @@
 
 package OBenitez.ProgramacionNCapasNoviembre25.JPA;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -59,6 +58,9 @@ public class Usuario {
     
     @Column(name = "curp")
     private String Curp;
+    
+    @Column(name = "status")
+    private Integer Status;
     
     @ManyToOne
     @JoinColumn(name = "idrol")
@@ -132,8 +134,6 @@ public class Usuario {
     public void setFechaNacimiento(Date FechaNacimiento) {
         this.FechaNacimiento = FechaNacimiento;
     }
-
-    
     
     public String getSexo() {
         return Sexo;
@@ -167,6 +167,16 @@ public class Usuario {
         this.Curp = Curp;
     }
 
+    public Integer getStatus() {
+        return Status;
+    }
+
+    public void setStatus(Integer Status) {
+        this.Status = Status;
+    }
+
+    
+    
     public Rol getRol() {
         return Rol;
     }

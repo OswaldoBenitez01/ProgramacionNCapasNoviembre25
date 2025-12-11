@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -90,7 +89,10 @@ public class UsuarioController {
         model.addAttribute("Roles", resultRol.Objects);
         Result resultPais = paisDAOImplementation.GetAll();
         model.addAttribute("Paises", resultPais.Objects);
-        model.addAttribute("Usuario", new Usuario());
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(0);
+        model.addAttribute("Usuario", usuario);
+        
         
         model.addAttribute("textoBoton", "Agregar Usuario");
         model.addAttribute("classBoton", "btn-success");
@@ -143,6 +145,26 @@ public class UsuarioController {
         
         redirectAttributes.addFlashAttribute("resultDelete", result);
         return "redirect:/Usuario";
+    }
+    
+    @GetMapping("toogleStatus/{IdUsuario}/{Status}")
+    @ResponseBody
+    public Result ToggleStatus(@PathVariable("IdUsuario") int IdUsuario, @PathVariable("Status") int Status,RedirectAttributes redirectAttributes){
+    
+        Result result = usuarioDAOImplementation.UpdateStatusById(IdUsuario, Status);
+        
+        if(result.Correct){
+            if (Status == 0) {
+                result.Object = "El usuario con ID " + IdUsuario + " fue desactivado";
+            } else{
+                result.Object = "El usuario con ID " + IdUsuario + " fue activado";
+            }
+        } else{
+            result.Object = "No fue posible desactivar al usuario :c";
+        }
+        
+        redirectAttributes.addFlashAttribute("resultDeleteSoft", result);
+        return result;
     }
     
     @GetMapping("deleteAddress/{IdDireccion}/{IdUsuario}")
@@ -254,8 +276,10 @@ public class UsuarioController {
             return "redirect:/Usuario";
             
         }else if(usuario.Direcciones.get(0).getIdDireccion() == -1){
+            
             //ACTUALIZAR INFORMACION BASICA USUARIO
-            Result result = usuarioDAOImplementation.UpdateBasicById(usuario);
+            //Result result = usuarioDAOImplementation.UpdateBasicById(usuario);
+            Result result = usuarioJPADAOImplementation.UpdateBasicById(usuario);
             if(result.Correct){
                 result.Object = "El usuario se actualizo correctamente";
             } else{
@@ -402,7 +426,11 @@ public class UsuarioController {
                 usuario.setApellidoMaterno(row.getCell(3).toString());
                 usuario.setEmail(row.getCell(4).toString());
                 usuario.setPassword(row.getCell(5).toString());
-                usuario.setFechaNacimiento((Date) row.getCell(6).getDateCellValue());
+                
+                java.util.Date utilDate = row.getCell(6).getDateCellValue();
+                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+                usuario.setFechaNacimiento(sqlDate);
+                
                 usuario.setSexo(row.getCell(7).toString());
                 usuario.setCelular(row.getCell(8).toString());
                 usuario.setTelefono(row.getCell(9).toString());

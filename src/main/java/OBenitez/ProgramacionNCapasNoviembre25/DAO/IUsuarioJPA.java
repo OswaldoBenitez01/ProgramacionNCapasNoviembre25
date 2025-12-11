@@ -7,4 +7,5 @@ import OBenitez.ProgramacionNCapasNoviembre25.ML.Result;
 public interface IUsuarioJPA {
     public Result GetAll();
     public Result Add(Usuario usuario);
+    public Result UpdateBasicById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML);
 }

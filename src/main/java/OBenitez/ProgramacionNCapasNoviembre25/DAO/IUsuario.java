@@ -18,6 +18,8 @@ public interface IUsuario {
     
     public Result UpdateBasicById(Usuario usuario);
     
+    public Result UpdateStatusById(Integer IdUsuario, Integer status);
+    
     public Result AddAddressById(Usuario usuario);
     
     public Result UpdateAddressById(Usuario usuario);

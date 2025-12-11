@@ -80,5 +80,29 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         
         return result;
     }
+
+    @Override
+    @Transactional
+    public Result UpdateBasicById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
+        Result result = new Result();
+        ModelMapper modelMapper = new ModelMapper();
+        try {
+            
+            Usuario usuarioDB = entityManager.find(Usuario.class, usuarioML.getIdUsuario());
+            
+            if (usuarioDB != null) {
+                Usuario usuarioJPA = modelMapper.map(usuarioML, Usuario.class);
+                usuarioJPA.Direcciones = usuarioDB.Direcciones;
+                entityManager.merge(usuarioJPA);
+            }
+            result.Correct = true;
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
     
 }

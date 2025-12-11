@@ -8,6 +8,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     </head>
     <body class="container py-4">
 
@@ -82,7 +83,7 @@
         
         <div th:unless="${mensajeBusqueda != null || #lists.isEmpty(Usuarios)}" 
              class="table-responsive rounded-2 shadow">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
                         <th>Acciones</th>
@@ -90,13 +91,14 @@
                         <th>Informacion</th>
                         <th>Contacto</th>
                         <th>Direcciones</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="usuario : ${Usuarios}">
                         <!--ACCIONES-->
                         <td class="text-center">
-                            <div class="btn-group">
+                            <div class="btn-group botonesdeaccion">
                                 <a th:href="@{/Usuario/detail/{IdUsuario} (IdUsuario = ${usuario.IdUsuario})}" 
                                    class="btn btn-outline-warning btn-sm rounded-pill me-2" title="Ver detalle">
                                     <i class="bi bi-pencil-square"></i>
@@ -105,10 +107,6 @@
                                         class="btn btn-outline-danger btn-sm rounded-pill me-2" title="Eliminar">
                                     <i class="bi bi-trash3-fill"></i>
                                 </button>
-                                <!--<a th:href="@{/Usuario/delete/{IdUsuario} (IdUsuario = ${usuario.IdUsuario})}"
-                                        class="btn btn-outline-danger btn-sm rounded-pill me-2" title="Eliminar">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </a> -->
                             </div>
                         </td>
 
@@ -116,8 +114,13 @@
                         <td>
                             <div class="fw-bold text-dark mb-1">
                                 <span class="badge bg-primary">ID: <span th:text="${usuario.IdUsuario}"></span></span>
+                                <span class="badge bg-info usuarioStatus">Status <span th:text="${usuario.Status}"></span></span>
                                 <br>
                                 <span th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></span>
+                            </div>
+                            <div th:switch="${usuario.Status}">
+                                <p th:case="0">Cuenta inactiva</p>
+                                <p th:case="1">Cuenta activa</p>
                             </div>
                             <div class="text-secondary small">
                                 <i class="bi bi-person"></i> <span th:text="${usuario.Username}"></span>
@@ -172,6 +175,15 @@
                             <div class="text-muted small" th:unless="${usuario.Direcciones != null}">Sin direcciones</div>
 
                         </td>
+                        <td class="ps-3">
+                            <div class="form-check form-switch align-center">
+                                <input class="form-check-input usuarioIsActive" 
+                                       type="checkbox" 
+                                       th:checked="${usuario.Status == 1} ? true : false"
+                                       th:value="${usuario.Status}"
+                                       switch th:onchange="|usuarioIsActive(${usuario.IdUsuario}, this)|">
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -211,6 +223,92 @@
                     }
                 });
             }
+            
+            $(function() {
+                console.log($(".usuarioIsActive").parent().parent().siblings());
+                $(".usuarioIsActive").parent().parent().siblings().css({
+                    "pointer-events": "none",
+                    "opacity": "0.4"
+                });
+            });
+            
+            
+            function usuarioIsActive(idUsuario, input){
+                //ACTIVAR AL USUARIO
+                if ($(input).is(':checked')) {
+                    let Status = 1;
+                    $.ajax({
+                        url: "/Usuario/toogleStatus/" + idUsuario + "/" + Status,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Correct) {
+                                $(input).parent().parent().siblings().css({
+                                    "pointer-events": "all",
+                                    "opacity": "1"
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: "Se activo el usuario"
+                                });
+                                $(".usuarioStatus").text("Status 1").removeClass("bg-danger").addClass("bg-info");
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            Toast.fire({
+                                icon: "success",
+                                title: "No se pudo activar el usuario"
+                            });
+                        }
+                    });
+                    
+                } else {
+                    Swal.fire({
+                        title: "Darás de baja al usuario! ¿Estas seguro?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Sí, dar de baja!",
+                        cancelButtonText: "Cancelar"
+                    }).then((result) => {
+                        
+                        ////DESACTIVAR AL USUARIO
+                        if (result.isConfirmed) {
+                            let Status = 0;
+                            $.ajax({
+                                url: "/Usuario/toogleStatus/" + idUsuario + "/" + Status,
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function (data, textStatus, jqXHR) {
+                                    if (data.Correct) {
+                                        $(input).parent().parent().siblings().css({
+                                            "pointer-events": "none",
+                                            "opacity": "0.3"
+                                        });
+                                        Toast.fire({
+                                            icon: "success",
+                                            title: "Se desactivo el usuario"
+                                        });
+                                        $(".usuarioStatus").text("Status 0").removeClass("bg-info").addClass("bg-danger");
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    Toast.fire({
+                                        icon: "error",
+                                        title: "No se pudo desactivar el usuario"
+                                    });
+                                }
+                                
+                            });
+                            
+                            
+                        }
+                    });  
+                    
+                }  
+                
+            } 
         </script>
         
         <!--
@@ -244,7 +342,6 @@
                 });
             }
         </script>
-         
         <script th:if="${resultCargaMasiva}" th:inline="javascript">
             console.log([[${resultCargaMasiva}]]);
             if ([[${resultCargaMasiva.Correct}]]){
@@ -259,6 +356,5 @@
                 });
             }
         </script>
-
     </body>
 </html>
