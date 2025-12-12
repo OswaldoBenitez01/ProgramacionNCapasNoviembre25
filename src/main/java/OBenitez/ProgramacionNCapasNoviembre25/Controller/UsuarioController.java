@@ -129,6 +129,9 @@ public class UsuarioController {
         Usuario usuarioEncontrado = (Usuario) result.Objects.get(0);
         model.addAttribute("Usuario", usuarioEncontrado);
         
+        Result resultRoles = rolDAOImplementation.GetALl();
+        model.addAttribute("Roles", resultRoles.Objects);
+        
         return "UsuarioDetail";
     }
     

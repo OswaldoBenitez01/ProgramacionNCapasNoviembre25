@@ -237,6 +237,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                         usuario.setTelefono(resultSet.getString("Telefono"));
                         if (resultSet.getString("Celular") != null) {usuario.setCelular(resultSet.getString("Celular"));}
                         if (resultSet.getString("Curp") != null) {usuario.setCurp(resultSet.getString("Curp"));}
+                        usuario.setStatus(resultSet.getInt("Status"));
                         //ROL
                         usuario.Rol = new Rol();
                         usuario.Rol.setIdRol(resultSet.getInt("IdRol"));
@@ -314,6 +315,7 @@ public class UsuarioDAOImplementation implements IUsuario{
                     usuario.setTelefono(resultSet.getString("Telefono"));
                     usuario.setCelular(resultSet.getString("Celular"));
                     usuario.setCurp(resultSet.getString("Curp"));
+                    usuario.setStatus(resultSet.getInt("Status"));
                     //ROL
                     usuario.Rol = new Rol();
                     usuario.Rol.setIdRol(resultSet.getInt("IdRol"));

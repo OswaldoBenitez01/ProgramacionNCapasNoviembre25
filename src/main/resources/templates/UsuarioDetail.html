@@ -22,10 +22,15 @@
                     <h3 class="text-primary mb-3 fw-bold"
                         th:text="|${Usuario.Nombre}  ${Usuario.ApellidoPaterno} ${Usuario.ApellidoMaterno}|">
                     </h3>
-                    <a class="btn btn-primary btn-sm mb-3"
+<!--                    <a class="btn btn-primary btn-sm mb-3"
                        th:href="@{/Usuario/formEditable?IdUsuario=}+${Usuario.IdUsuario}">
                         <i class="bi bi-pencil"></i> Editar Informacion
-                    </a>
+                    </a>-->
+                    <button class="btn btn-primary btn-sm mb-3"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalEditarUsuario">
+                        <i class="bi bi-pencil"></i> Editar Informacion
+                    </button>
                 </div>
                 
                 <div class="row g-3">
@@ -83,6 +88,133 @@
                 </div>
             </li>
         </ul>
+        
+        <div class="modal fade" id="modalEditarUsuario" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-person-fill text-primary"></i> Editar Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form th:action="@{/Usuario/formEditable}" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" name="IdUsuario" th:value="${Usuario.IdUsuario}">
+                            <input type="hidden" name="Status" th:value="${Usuario.Status}">
+                            <input type="hidden" name="Direcciones[0].IdDireccion" value="-1">
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="Nombre" 
+                                               th:value="${Usuario.Nombre}" required>
+                                        <label><i class="bi bi-person-fill"></i> Nombre</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="ApellidoPaterno" 
+                                               th:value="${Usuario.ApellidoPaterno}" required>
+                                        <label><i class="bi bi-person"></i> Apellido Paterno</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="ApellidoMaterno" 
+                                               th:value="${Usuario.ApellidoMaterno}">
+                                        <label><i class="bi bi-person"></i> Apellido Materno</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="Curp" 
+                                               th:value="${Usuario.Curp}" maxlength="18">
+                                        <label><i class="bi bi-card-text"></i> CURP</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" name="FechaNacimiento" 
+                                               th:value="${Usuario.FechaNacimiento}">
+                                        <label><i class="bi bi-calendar-event"></i> Fecha Nacimiento</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" name="Sexo" th:field="${Usuario.Sexo}">
+                                            <option value="N">No definido</option>
+                                            <option value="H">Hombre</option>
+                                            <option value="M">Mujer</option>
+                                        </select>
+                                        <label><i class="bi bi-gender-ambiguous"></i> Genero</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="Username" 
+                                               th:value="${Usuario.Username}" required>
+                                        <label><i class="bi bi-person-circle"></i> Username</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <select class="form-select" name="Rol.IdRol" required>
+                                            <option value="0">Selecciona un Rol</option>
+                                            <option th:each="rol : ${Roles}"
+                                                    th:text="${rol.Nombre}"
+                                                    th:value="${rol.IdRol}"
+                                                    th:selected="${rol.IdRol == Usuario.Rol.IdRol}">
+                                            </option>
+                                        </select>
+                                        <label><i class="bi bi-briefcase"></i> Rol/Puesto</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" name="Email" 
+                                               th:value="${Usuario.Email}" required>
+                                        <label><i class="bi bi-envelope-fill"></i> Email</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" name="Telefono" 
+                                               th:value="${Usuario.Telefono}" maxlength="10">
+                                        <label><i class="bi bi-telephone-fill"></i> Telefono</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" name="Celular" 
+                                               th:value="${Usuario.Celular}" maxlength="10">
+                                        <label><i class="bi bi-phone-fill"></i> Celular</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="Password" 
+                                               th:value="${Usuario.Password}" required>
+                                        <label><i class="bi bi-shield-lock-fill"></i> Contraseña</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         
         <!--
          ====== EVENTOS ======
