@@ -114,24 +114,27 @@
                         <td>
                             <div class="fw-bold text-dark mb-1">
                                 <span class="badge bg-primary">ID: <span th:text="${usuario.IdUsuario}"></span></span>
-                                <span id="usuarioStatus" class="badge bg-info">Status <span th:text="${usuario.Status}"></span></span>
+                                <span class="badge usuario-status-badge" 
+                                      th:classappend="${usuario.Status == 1} ? 'bg-info' : 'bg-danger'">
+                                    Status <span th:text="${usuario.Status}"></span>
+                                </span>
                                 <br>
                                 <span th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></span>
                             </div>
-                            <div th:switch="${usuario.Status}">
-                                <p th:case="0">Cuenta inactiva</p>
-                                <p th:case="1">Cuenta activa</p>
+                            <div th:switch="${usuario.Status}" class="usuario-status-text">
+                                <p th:case="0" class="text-danger small mb-0">Cuenta inactiva</p>
+                                <p th:case="1" class="text-success small mb-0">Cuenta activa</p>
                             </div>
                             <div class="text-secondary small">
                                 <i class="bi bi-person"></i> <span th:text="${usuario.Username}"></span>
                             </div>
                         </td>
 
-                        <!--iNFORMAICON-->
+                        <!--INFORMACION-->
                         <td>
                             <div class="mb-1 small">
                                 <i class="bi bi-calendar"></i> Nacimiento: <span th:text="${usuario.FechaNacimiento}"></span><br>
-                                <i class="bi bi-gender-ambiguous"></i> Sexo: <span th:text="${usuario.Sexo}"></span></span>
+                                <i class="bi bi-gender-ambiguous"></i> Sexo: <span th:text="${usuario.Sexo}"></span>
                             </div>
                             <div class="mb-1 small">
                                 <i class="bi bi-shield-check"></i> CURP:
@@ -143,6 +146,7 @@
                                 <span class="text-primary" th:text="${usuario.Rol.Nombre}"></span>
                             </div>
                         </td>
+                        
                         <!-- CONTACTO -->
                         <td>
                             <div class="mb-1 small">
@@ -159,29 +163,29 @@
                                 <span th:text="${usuario.Telefono}"></span>
                             </div>
                         </td>
+                        
                         <!-- DIRECCIONES -->
                         <td>
-                            <ul class="mb-0 ps-3 small " th:if="${usuario.Direcciones != null}">
-
-                                <li class="list-group-item" th:each="direccion : ${usuario.Direcciones}" >
+                            <ul class="mb-0 ps-3 small" th:if="${usuario.Direcciones != null}">
+                                <li class="list-group-item" th:each="direccion : ${usuario.Direcciones}">
                                     <i class="bi bi-geo"></i>
                                     <span class="fw-bold" th:text="|${direccion.Calle} ${direccion.NumeroInterior} ${direccion.NumeroExterior}, 
                                           ${direccion.Colonia.Nombre}|"></span> <br>
                                     <span class="ms-3 text-secondary" th:text="|${direccion.Colonia.Municipio.Nombre}, 
-                                          ${direccion.Colonia.Municipio.Estado.Nombre} , 
+                                          ${direccion.Colonia.Municipio.Estado.Nombre}, 
                                           ${direccion.Colonia.Municipio.Estado.Pais.Nombre}|"></span>
                                 </li>
                             </ul>
                             <div class="text-muted small" th:unless="${usuario.Direcciones != null}">Sin direcciones</div>
-
                         </td>
+                        
+                        <!-- ESTADO -->
                         <td class="ps-3">
                             <div class="form-check form-switch align-center">
                                 <input class="form-check-input usuarioIsActive" 
                                        type="checkbox" 
-                                       th:checked="${usuario.Status == 1} ? true : false"
-                                       th:value="${usuario.Status}"
-                                       switch th:onchange="|usuarioIsActive(${usuario.IdUsuario}, this)|">
+                                       th:checked="${usuario.Status == 1}"
+                                       th:onchange="|usuarioIsActive(${usuario.IdUsuario}, this)|">
                             </div>
                         </td>
                     </tr>
@@ -207,10 +211,11 @@
                   toast.onmouseleave = Swal.resumeTimer;
                 }
             });
+            
             function EliminarUsuario(IdUsuario) {
                 Swal.fire({
-                    title: "Estas seguro de eliminar al usuario?",
-                    text: "No podras revertir esta accion!",
+                    title: "¿Estás seguro de eliminar al usuario?",
+                    text: "¡No podrás revertir esta acción!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
@@ -224,16 +229,32 @@
                 });
             }
             
-            $(function() {
-                if ($(".usuarioIsActive").val() == 0) {
+            // estilos iniciales 
+            $(document).ready(function() {
+                $('.usuarioIsActive').each(function() {
+                    const checkbox = $(this);
+                    const fila = checkbox.closest('tr');
+                    const contenido = fila.find('.botonesdeaccion, td:not(:last-child)');
                     
-                }
+                    if (!checkbox.is(':checked')) {
+                        contenido.css({
+                            "pointer-events": "none",
+                            "opacity": "0.3"
+                        });
+                    }
+                });
             });
             
-            
             function usuarioIsActive(idUsuario, input){
+                const $input = $(input);
+                const $fila = $input.closest('tr');
+                const $contenido = $fila.find('.botonesdeaccion, td:not(:last-child)');
+                const $badgeSpan = $fila.find('.usuario-status-badge span');
+                const $badge = $fila.find('.usuario-status-badge');
+                const $statusText = $fila.find('.usuario-status-text p');
+                
                 //ACTIVAR AL USUARIO
-                if ($(input).is(':checked')) {
+                if ($input.is(':checked')) {
                     let Status = 1;
                     $.ajax({
                         url: "/Usuario/toogleStatus/" + idUsuario + "/" + Status,
@@ -241,28 +262,34 @@
                         dataType: 'json',
                         success: function (data, textStatus, jqXHR) {
                             if (data.Correct) {
-                                $(input).parent().parent().siblings().css({
+                                $contenido.css({
                                     "pointer-events": "all",
                                     "opacity": "1"
                                 });
+                                $badgeSpan.text("1");
+                                $badge.removeClass("bg-danger").addClass("bg-info");
+                                $statusText.text("Cuenta activa")
+                                          .removeClass("text-danger")
+                                          .addClass("text-success");
+                                
                                 Toast.fire({
                                     icon: "success",
-                                    title: "Se activo el usuario"
+                                    title: "Se activó el usuario"
                                 });
-                                $(".usuarioStatus").text("Status 1").removeClass("bg-danger").addClass("bg-info");
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
+                            $input.prop('checked', false);
                             Toast.fire({
-                                icon: "success",
+                                icon: "error",
                                 title: "No se pudo activar el usuario"
                             });
                         }
                     });
-
+                    //DESACTIVAR USUARIO
                 } else {
                     Swal.fire({
-                        title: "Darás de baja al usuario! ¿Estas seguro?",
+                        title: "¡Darás de baja al usuario! ¿Estás seguro?",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
@@ -270,8 +297,6 @@
                         confirmButtonText: "Sí, dar de baja!",
                         cancelButtonText: "Cancelar"
                     }).then((result) => {
-
-                        ////DESACTIVAR AL USUARIO
                         if (result.isConfirmed) {
                             let Status = 0;
                             $.ajax({
@@ -280,24 +305,32 @@
                                 dataType: 'json',
                                 success: function (data, textStatus, jqXHR) {
                                     if (data.Correct) {
-                                        $(input).parent().parent().siblings().css({
+                                        $contenido.css({
                                             "pointer-events": "none",
                                             "opacity": "0.3"
                                         });
+                                        $badgeSpan.text("0");
+                                        $badge.removeClass("bg-info").addClass("bg-danger");
+                                        $statusText.text("Cuenta inactiva")
+                                                  .removeClass("text-success")
+                                                  .addClass("text-danger");
+                                        
                                         Toast.fire({
                                             icon: "success",
-                                            title: "Se desactivo el usuario"
+                                            title: "Se desactivó el usuario"
                                         });
-                                        $(".usuarioStatus").text("Status 0").removeClass("bg-info").addClass("bg-danger");
                                     }
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
+                                    $input.prop('checked', true);
                                     Toast.fire({
                                         icon: "error",
                                         title: "No se pudo desactivar el usuario"
                                     });
                                 }
                             });
+                        } else {
+                            $input.prop('checked', true);
                         }
                     });
                 }

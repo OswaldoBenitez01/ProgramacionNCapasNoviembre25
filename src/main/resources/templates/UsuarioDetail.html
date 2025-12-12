@@ -71,10 +71,6 @@
                         </span>
                     </div>
                     <div class="btn-group">
-                        <!--<a class="btn btn-danger btn-sm"
-                           th:href="@{/Usuario/deleteAddress/{IdDireccion} (IdDireccion = ${direccion.IdDireccion})}">
-                            <i class="bi bi-trash"></i> Eliminar
-                        </a>-->
                         <button th:onclick="|EliminarDireccion(${direccion.IdDireccion}, ${Usuario.IdUsuario})|"
                                 class="btn btn-danger btn-sm" title="Eliminar">
                             <i class="bi bi-trash"></i> Eliminar
@@ -87,124 +83,6 @@
                 </div>
             </li>
         </ul>
-        
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal</button>
-        
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="nombreInput"
-                                    placeholder="Tu nombre">
-                                <label for="nombreInput"><i class="bi bi-person-fill ms-1"></i>&nbsp;&nbsp;Nombre</label>   
-                            </div>
-                             <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="apellidoPaternoInput"
-                                    placeholder="Tu apellido paterno"
-                                    oncopy="return false" onpaste="return false">
-                                <label for="apellidoPaternoInput"><i class="bi bi-person ms-1"></i>&nbsp;&nbsp;Apellido Paterno</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="apellidoMaternoInput"
-                                    placeholder="Tu apellido materno"
-                                    oncopy="return false" onpaste="return false">
-                                <label for="apellidoMaternoInput"><i class="bi bi-person ms-1"></i>&nbsp;&nbsp;Apellido Materno</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="curpInput"
-                                    placeholder="GOAR950815HDFRML09"
-                                    maxlength="18">
-                                <label for="curpInput"><i class="bi bi-card-text"></i>&nbsp;&nbsp;CURP</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="date"
-                                    class="form-control"
-                                    id="fechaNacimientoInput"
-                                    placeholder="Tu fecha de nacimiento">
-                                <label for="fechaNacimientoInput"><i class="bi bi-calendar-event ms-1"></i>&nbsp;&nbsp;Fecha de Nacimiento</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <select
-                                    class="form-select"
-                                    id="sexoSelect">
-                                    <option value="N">Selecciona una opcion</option>
-                                    <option value="H">Hombre</option>
-                                    <option value="M">Mujer</option>
-                                    <option value="N">No definido</option>
-                                </select>
-                                <label for="sexoSelect"><i class="bi bi-gender-ambiguous ms-1"></i>&nbsp;&nbsp;Genero</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="usernameInput"
-                                    placeholder="tunombre123">
-                                <label for="usernameInput"><i class="bi bi-person-circle ms-1"></i>&nbsp;&nbsp;Username</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="emailInput"
-                                    placeholder="ejemplo@gmail.com">
-                                <label for="emailInput"><i class="bi bi-envelope-fill ms-1"></i>&nbsp;&nbsp;Correo Electronico</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="telefonoInput"
-                                    placeholder="5512345678"
-                                    maxlength="10">
-                                <label for="telefonoInput"><i class="bi bi-telephone-fill ms-1"></i>&nbsp;&nbsp;Telefono</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="celularInput"
-                                    placeholder="5587654321"
-                                    maxlength="10">
-                                <label for="celularInput"><i class="bi bi-phone-fill ms-1"></i>&nbsp;&nbsp;Celular</label>   
-                            </div>
-                            <div class="form-floating mb-2">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="passwordInput"
-                                    placeholder="Contraseña$123"
-                                    oncopy="return false" onpaste="return false">
-                                <label for="passwordInput"><i class="bi bi-shield-lock-fill ms-1"></i>&nbsp;&nbsp;Contraseña</label>   
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <!--
          ====== EVENTOS ======
