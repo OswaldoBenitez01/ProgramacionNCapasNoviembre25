@@ -114,7 +114,7 @@
                         <td>
                             <div class="fw-bold text-dark mb-1">
                                 <span class="badge bg-primary">ID: <span th:text="${usuario.IdUsuario}"></span></span>
-                                <span class="badge bg-info usuarioStatus">Status <span th:text="${usuario.Status}"></span></span>
+                                <span id="usuarioStatus" class="badge bg-info">Status <span th:text="${usuario.Status}"></span></span>
                                 <br>
                                 <span th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></span>
                             </div>
@@ -225,11 +225,9 @@
             }
             
             $(function() {
-                console.log($(".usuarioIsActive").parent().parent().siblings());
-                $(".usuarioIsActive").parent().parent().siblings().css({
-                    "pointer-events": "none",
-                    "opacity": "0.4"
-                });
+                if ($(".usuarioIsActive").val() == 0) {
+                    
+                }
             });
             
             
@@ -261,7 +259,7 @@
                             });
                         }
                     });
-                    
+
                 } else {
                     Swal.fire({
                         title: "Darás de baja al usuario! ¿Estas seguro?",
@@ -272,7 +270,7 @@
                         confirmButtonText: "Sí, dar de baja!",
                         cancelButtonText: "Cancelar"
                     }).then((result) => {
-                        
+
                         ////DESACTIVAR AL USUARIO
                         if (result.isConfirmed) {
                             let Status = 0;
@@ -299,16 +297,11 @@
                                         title: "No se pudo desactivar el usuario"
                                     });
                                 }
-                                
                             });
-                            
-                            
                         }
-                    });  
-                    
-                }  
-                
-            } 
+                    });
+                }
+            }
         </script>
         
         <!--
