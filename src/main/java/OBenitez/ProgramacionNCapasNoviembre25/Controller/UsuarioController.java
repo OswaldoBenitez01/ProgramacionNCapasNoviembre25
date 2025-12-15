@@ -125,9 +125,11 @@ public class UsuarioController {
     public String Detail(@PathVariable("IdUsuario") int IdUsuario, Model model){
     
         Result result = usuarioDAOImplementation.GetById(IdUsuario);
-        
         Usuario usuarioEncontrado = (Usuario) result.Objects.get(0);
         model.addAttribute("Usuario", usuarioEncontrado);
+        
+        Result resultPais = paisDAOImplementation.GetAll();
+        model.addAttribute("Paises", resultPais.Objects);
         
         Result resultRoles = rolDAOImplementation.GetALl();
         model.addAttribute("Roles", resultRoles.Objects);
