@@ -8,4 +8,6 @@ public interface IUsuarioJPA {
     public Result GetAll();
     public Result Add(Usuario usuario);
     public Result UpdateBasicById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML);
+    public Result AddAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML);
+    
 }

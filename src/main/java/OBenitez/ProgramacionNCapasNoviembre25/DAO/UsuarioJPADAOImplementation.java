@@ -104,5 +104,13 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         
         return result;
     }
+
+    @Override
+    public Result AddAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
+        Result result = new Result();
+        
+        
+        return result;
+    }
     
 }
