@@ -106,9 +106,68 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
     }
 
     @Override
+    @Transactional
     public Result AddAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
         Result result = new Result();
         
+        try {
+            Usuario usuarioDB = entityManager.find(Usuario.class, usuarioML.getIdUsuario());
+            
+            if (usuarioDB == null) {
+                result.Correct = false;
+                result.ErrorMessage = "Usuario no encontrado";
+                return result;
+            }
+            
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion direccion = new OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion();
+            direccion.setUsuario(usuarioDB);
+            direccion.setCalle(usuarioML.Direcciones.get(0).getCalle());
+            direccion.setNumeroInterior(usuarioML.Direcciones.get(0).getNumeroInterior());
+            direccion.setNumeroExterior(usuarioML.Direcciones.get(0).getNumeroExterior());
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia colonia = entityManager.find(OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia.class, usuarioML.Direcciones.get(0).Colonia.getIdColonia());
+            direccion.setColonia(colonia);
+            
+            entityManager.persist(direccion);
+            
+            result.Correct = true;
+            
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+
+    @Override
+    public Result UpdateAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
+        Result result = new Result();
+        
+        try {
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion direccionDB = entityManager.find(OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion.class, usuarioML.Direcciones.get(0).getIdDireccion());
+            
+            if (direccionDB == null) {
+                result.Correct = false;
+                result.ErrorMessage = "Direccion no encontrada";
+                return result;
+            }
+            
+            direccionDB.setCalle(usuarioML.Direcciones.get(0).getCalle());
+            direccionDB.setNumeroInterior(usuarioML.Direcciones.get(0).getNumeroInterior());
+            direccionDB.setNumeroExterior(usuarioML.Direcciones.get(0).getNumeroExterior());
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia colonia = entityManager.find(OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia.class, usuarioML.Direcciones.get(0).Colonia.getIdColonia());
+            direccionDB.setColonia(colonia);
+            
+            entityManager.merge(direccionDB);
+            
+            result.Correct = true;
+            
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
         
         return result;
     }

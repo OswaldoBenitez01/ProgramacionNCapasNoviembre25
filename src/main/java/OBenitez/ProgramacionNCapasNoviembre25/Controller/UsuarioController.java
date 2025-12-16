@@ -295,7 +295,8 @@ public class UsuarioController {
             
         }else if(usuario.Direcciones.get(0).getIdDireccion() == 0){
             //AGREGA UNA DIRECCION NUEVA
-            Result result = usuarioDAOImplementation.AddAddressById(usuario);
+            //Result result = usuarioDAOImplementation.AddAddressById(usuario);
+            Result result = usuarioJPADAOImplementation.AddAddressById(usuario);
             if(result.Correct){
                 result.Object = "La direccion se agrego correctamente";
             } else{
