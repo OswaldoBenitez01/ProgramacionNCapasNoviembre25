@@ -8,14 +8,12 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     </head>
     <body class="container py-5">
-        
-        <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
             <h4>Informacion del Usuario</h4>
             <a th:href="@{/Usuario}" class="btn btn-secondary btn-sm">Volver</a>
         </div>
         
-        <!-- INFORMACIÓN USUARIO -->
+        <!-- INFO BASICA USUARIO -->
         <div class="card mb-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -25,7 +23,7 @@
                     <button class="btn btn-primary btn-sm mb-3" 
                             data-bs-toggle="modal" 
                             data-bs-target="#modalEditarUsuario">
-                        <i class="bi bi-pencil"></i> Editar Informacion
+                        <i class="bi bi-pencil"></i>&nbsp;&nbsp;&nbsp;Editar Informacion
                     </button>
                 </div>
                 
@@ -50,7 +48,7 @@
             <button class="btn btn-success btn-sm"
                     data-bs-toggle="modal" 
                     data-bs-target="#modalAgregarDireccion">
-                <i class="bi bi-plus"></i> Agregar Direccion
+                <i class="bi bi-plus"></i>&nbsp;&nbsp;Agregar Direccion
             </button>
         </div>
         
@@ -58,8 +56,8 @@
             Sin direcciones registradas
         </div>
         
-        <ul class="list-group" th:unless="${Usuario.Direcciones == null}">
-            <li class="list-group-item" th:each="direccion : ${Usuario.Direcciones}">
+        <ul class="list-unstyled" th:unless="${Usuario.Direcciones == null}">
+            <li th:each="direccion : ${Usuario.Direcciones}">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <strong th:text="|${direccion.Calle} ${direccion.NumeroInterior} ${direccion.NumeroExterior}|"></strong>
@@ -378,7 +376,6 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         
         <script>
-            // ========== CONFIGURACIÓN SWEET ALERT ==========
             const Toast = Swal.mixin({
                 toast: true,
                 position: "bottom-start",
@@ -388,7 +385,6 @@
                 timerProgressBar: true
             });
             
-            // ========== FUNCIÓN: ELIMINAR DIRECCIÓN ==========
             function eliminarDireccion(idDireccion, idUsuario) {
                 Swal.fire({
                     title: '¿Eliminar dirección?',
@@ -406,19 +402,16 @@
                 });
             }
             
-            // ========== CUANDO SE ABRE EL MODAL DE EDITAR DIRECCIÓN ==========
             document.getElementById('modalEditarDireccion').addEventListener('show.bs.modal', function(event) {
-                // Obtener el botón que abrió el modal
+                
                 const boton = event.relatedTarget;
                 
-                // Llenar los campos simples
                 document.getElementById('edit-idusuario').value = boton.getAttribute('data-usuario');
                 document.getElementById('edit-iddireccion').value = boton.getAttribute('data-direccion');
                 document.getElementById('edit-calle').value = boton.getAttribute('data-calle');
                 document.getElementById('edit-numint').value = boton.getAttribute('data-num-int') || '';
                 document.getElementById('edit-numext').value = boton.getAttribute('data-num-ext');
                 
-                // Configurar los selectores
                 const selectPais = document.getElementById('edit-pais');
                 const selectEstado = document.getElementById('edit-estado');
                 const selectMunicipio = document.getElementById('edit-municipio');
@@ -429,24 +422,22 @@
                 selectMunicipio.setAttribute('data-selected', boton.getAttribute('data-municipio'));
                 selectColonia.setAttribute('data-selected', boton.getAttribute('data-colonia'));
                 
-                // Iniciar la cascada
                 $(selectPais).trigger('change');
             });
             
-            // ========== SELECTORES EN CASCADA: AGREGAR DIRECCIÓN ==========
+            // ========== AGREGAR DIRECCIÓN ==========
             
-            // Cuando cambia el país (agregar)
             $('#add-pais').change(function() {
                 const idPais = $(this).val();
                 
-                if (idPais == '0') {
+                if (idPais === '0') {
                     $('#add-estado').html('<option value="0">Selecciona un Estado</option>');
                     $('#add-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     $('#add-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
                 
-                // Cargar estados
+                // Carga estados
                 $.get('/Usuario/getEstadosByPais/' + idPais, function(data) {
                     $('#add-estado').html('<option value="0">Selecciona un Estado</option>');
                     data.Objects.forEach(function(estado) {
@@ -457,17 +448,16 @@
                 });
             });
             
-            // Cuando cambia el estado (agregar)
             $('#add-estado').change(function() {
                 const idEstado = $(this).val();
                 
-                if (idEstado == '0') {
+                if (idEstado === '0') {
                     $('#add-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     $('#add-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
                 
-                // Cargar municipios
+                // Carga municipios
                 $.get('/Usuario/getMunicipiosByEstado/' + idEstado, function(data) {
                     $('#add-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     data.Objects.forEach(function(municipio) {
@@ -477,16 +467,15 @@
                 });
             });
             
-            // Cuando cambia el municipio (agregar)
             $('#add-municipio').change(function() {
                 const idMunicipio = $(this).val();
                 
-                if (idMunicipio == '0') {
+                if (idMunicipio === '0') {
                     $('#add-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
                 
-                // Cargar colonias
+                // Carga colonias
                 $.get('/Usuario/getColoniasByMunicipio/' + idMunicipio, function(data) {
                     $('#add-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     data.Objects.forEach(function(colonia) {
@@ -495,67 +484,62 @@
                 });
             });
             
-            // ========== SELECTORES EN CASCADA: EDITAR DIRECCIÓN ==========
+            // ========== EDITAR DIRECCIÓN ==========
             
-            // Cuando cambia el país (editar)
             $('#edit-pais').change(function() {
                 const idPais = $(this).val();
                 const estadoSeleccionado = $('#edit-estado').attr('data-selected') || '0';
                 
-                if (idPais == '0') {
+                if (idPais === '0') {
                     $('#edit-estado').html('<option value="0">Selecciona un Estado</option>');
                     $('#edit-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     $('#edit-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
                 
-                // Cargar estados
+                // Carga estados
                 $.get('/Usuario/getEstadosByPais/' + idPais, function(data) {
                     $('#edit-estado').html('<option value="0">Selecciona un Estado</option>');
                     data.Objects.forEach(function(estado) {
-                        const selected = estado.idEstado == estadoSeleccionado ? 'selected' : '';
+                        const selected = estado.idEstado === estadoSeleccionado ? 'selected' : '';
                         $('#edit-estado').append('<option value="' + estado.idEstado + '" ' + selected + '>' + estado.nombre + '</option>');
                     });
                     
-                    // Si hay un estado seleccionado, continuar la cascada
-                    if (estadoSeleccionado != '0') {
+                    if (estadoSeleccionado !== '0') {
                         $('#edit-estado').trigger('change');
                     }
                 });
             });
             
-            // Cuando cambia el estado (editar)
             $('#edit-estado').change(function() {
                 const idEstado = $(this).val();
                 const municipioSeleccionado = $('#edit-municipio').attr('data-selected') || '0';
                 
-                if (idEstado == '0') {
+                if (idEstado === '0') {
                     $('#edit-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     $('#edit-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
                 
-                // Cargar municipios
+                // Carga municipios
                 $.get('/Usuario/getMunicipiosByEstado/' + idEstado, function(data) {
                     $('#edit-municipio').html('<option value="0">Selecciona un Municipio</option>');
                     data.Objects.forEach(function(municipio) {
-                        const selected = municipio.idMunicipio == municipioSeleccionado ? 'selected' : '';
+                        const selected = municipio.idMunicipio === municipioSeleccionado ? 'selected' : '';
                         $('#edit-municipio').append('<option value="' + municipio.idMunicipio + '" ' + selected + '>' + municipio.nombre + '</option>');
                     });
                     
-                    // Si hay un municipio seleccionado, continuar la cascada
-                    if (municipioSeleccionado != '0') {
+                    if (municipioSeleccionado !== '0') {
                         $('#edit-municipio').trigger('change');
                     }
                 });
             });
             
-            // Cuando cambia el municipio (editar)
             $('#edit-municipio').change(function() {
                 const idMunicipio = $(this).val();
                 const coloniaSeleccionada = $('#edit-colonia').attr('data-selected') || '0';
                 
-                if (idMunicipio == '0') {
+                if (idMunicipio === '0') {
                     $('#edit-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     return;
                 }
@@ -564,14 +548,14 @@
                 $.get('/Usuario/getColoniasByMunicipio/' + idMunicipio, function(data) {
                     $('#edit-colonia').html('<option value="0">Selecciona una Colonia</option>');
                     data.Objects.forEach(function(colonia) {
-                        const selected = colonia.idColonia == coloniaSeleccionada ? 'selected' : '';
+                        const selected = colonia.idColonia === coloniaSeleccionada ? 'selected' : '';
                         $('#edit-colonia').append('<option value="' + colonia.idColonia + '" ' + selected + '>' + colonia.nombre + '</option>');
                     });
                 });
             });
         </script>
         
-        <!-- ALERTAS DE THYMELEAF -->
+        <!-- ALERTAS -->
         <script th:if="${resultDeleteAddress}" th:inline="javascript">
             [[${resultDeleteAddress.Correct}]] 
                 ? Toast.fire({ icon: 'success', title: [[${resultDeleteAddress.Object}]] })
