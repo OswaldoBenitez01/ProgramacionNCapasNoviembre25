@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -71,8 +70,7 @@ public class UsuarioController {
     
     @GetMapping
     public String GetAll(Model model){ // resultDelete
-    
-        //Result result = usuarioDAOImplementation.GetAll();
+
         Result result = usuarioJPADAOImplementation.GetAll();
         model.addAttribute("Usuarios", result.Objects);
         model.addAttribute("usuarioBusqueda", new Usuario());
@@ -92,11 +90,7 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(0);
         model.addAttribute("Usuario", usuario);
-        
-        
-        model.addAttribute("textoBoton", "Agregar Usuario");
-        model.addAttribute("classBoton", "btn-success");
-        model.addAttribute("btnVolver", "/Usuario");
+     
         return "UsuarioForm";
     }
     
@@ -124,9 +118,8 @@ public class UsuarioController {
     @GetMapping("detail/{IdUsuario}")
     public String Detail(@PathVariable("IdUsuario") int IdUsuario, Model model){
     
-        Result result = usuarioDAOImplementation.GetById(IdUsuario);
-        Usuario usuarioEncontrado = (Usuario) result.Objects.get(0);
-        model.addAttribute("Usuario", usuarioEncontrado);
+        Result result = usuarioJPADAOImplementation.GetById(IdUsuario);
+        model.addAttribute("Usuario", result.Object);
         
         Result resultPais = paisDAOImplementation.GetAll();
         model.addAttribute("Paises", resultPais.Objects);
@@ -140,7 +133,7 @@ public class UsuarioController {
     @GetMapping("delete/{IdUsuario}")
     public String Delete(@PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes){
     
-        Result result = usuarioDAOImplementation.DeleteById(IdUsuario);
+        Result result = usuarioJPADAOImplementation.DeleteUserById(IdUsuario);
         
         if(result.Correct){
             result.Object = "El usuario con ID " + IdUsuario + " fue eliminado";
@@ -158,24 +151,14 @@ public class UsuarioController {
     
         Result result = usuarioDAOImplementation.UpdateStatusById(IdUsuario, Status);
         
-        if(result.Correct){
-            if (Status == 0) {
-                result.Object = "El usuario con ID " + IdUsuario + " fue desactivado";
-            } else{
-                result.Object = "El usuario con ID " + IdUsuario + " fue activado";
-            }
-        } else{
-            result.Object = "No fue posible desactivar al usuario :c";
-        }
-        
         redirectAttributes.addFlashAttribute("resultDeleteSoft", result);
         return result;
     }
     
     @GetMapping("deleteAddress/{IdDireccion}/{IdUsuario}")
     public String DeleteAddress(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes){
-    
-        Result result = usuarioDAOImplementation.DeleteAddressById(IdDireccion);
+
+        Result result = usuarioJPADAOImplementation.DeleteAddressById(IdDireccion);
         
         if(result.Correct){
             result.Object = "La direccion fue eliminada";
@@ -208,68 +191,57 @@ public class UsuarioController {
     }
     
     
-    @GetMapping("/formEditable")
-    public String Form(@RequestParam("IdUsuario") int IdUsuario, @RequestParam(required = false) Integer IdDireccion, Model model){
-    
-        if (IdDireccion == null) {
-            // ==== EDITAR USUARIO
-            Result result = usuarioDAOImplementation.GetByIdBasicInfo(IdUsuario);
-            
-            Usuario usuario = (Usuario) result.Object;
-            usuario.Direcciones = new ArrayList<>();
-            usuario.Direcciones.add(new Direccion());
-            usuario.Direcciones.get(0).setIdDireccion(-1);
-            model.addAttribute("Usuario", usuario);
-            
-            //Llenado de campos
-            Result resultRol = rolDAOImplementation.GetALl();
-            model.addAttribute("Roles", resultRol.Objects);
-            Result resultPais = paisDAOImplementation.GetAll();
-            model.addAttribute("Paises", resultPais.Objects);
-            
-            model.addAttribute("textoBoton", "Editar Usuario");
-            model.addAttribute("classBoton", "btn-primary");
-            model.addAttribute("btnVolver", "/Usuario/detail/"+IdUsuario);
-            return "UsuarioForm";
-        } else if (IdDireccion == 0) {
-            //AGREGAR DIRECCION
-            Usuario usuario = new Usuario();
-            usuario.setIdUsuario(IdUsuario);
-            usuario.Direcciones = new ArrayList<>();
-            usuario.Direcciones.add(new Direccion());
-            model.addAttribute("Usuario", usuario);
-            Result resultPais = paisDAOImplementation.GetAll();
-            model.addAttribute("Paises", resultPais.Objects);
-            
-            model.addAttribute("textoBoton", "Agregar Direccion");
-            model.addAttribute("classBoton", "btn-success");
-            model.addAttribute("btnVolver", "/Usuario/detail/"+IdUsuario);
-            return "UsuarioForm";
-        } else {
-            //EDITAR DIRECCION
-            Result result = usuarioDAOImplementation.GetAddressById(IdUsuario,IdDireccion);
-            model.addAttribute("Usuario", result.Object);
-            Result resultPais = paisDAOImplementation.GetAll();
-            model.addAttribute("Paises", resultPais.Objects);
-            
-            model.addAttribute("textoBoton", "Editar Direccion");
-            model.addAttribute("classBoton", "btn-warning");
-            model.addAttribute("btnVolver", "/Usuario/detail/"+IdUsuario);
-            return "UsuarioForm";
-        }
-    
-    }
+//    @GetMapping("/formEditable")
+//    public String Form(@RequestParam("IdUsuario") int IdUsuario, @RequestParam(required = false) Integer IdDireccion, Model model){
+//    
+//        if (IdDireccion == null) {
+//            // ==== EDITAR USUARIO
+//            Result result = usuarioDAOImplementation.GetByIdBasicInfo(IdUsuario);
+//            
+//            Usuario usuario = (Usuario) result.Object;
+//            usuario.Direcciones = new ArrayList<>();
+//            usuario.Direcciones.add(new Direccion());
+//            usuario.Direcciones.get(0).setIdDireccion(-1);
+//            model.addAttribute("Usuario", usuario);
+//            
+//            //Llenado de campos
+//            Result resultRol = rolDAOImplementation.GetALl();
+//            model.addAttribute("Roles", resultRol.Objects);
+//            Result resultPais = paisDAOImplementation.GetAll();
+//            model.addAttribute("Paises", resultPais.Objects);
+//
+//            return "UsuarioForm";
+//        } else if (IdDireccion == 0) {
+//            //AGREGAR DIRECCION
+//            Usuario usuario = new Usuario();
+//            usuario.setIdUsuario(IdUsuario);
+//            usuario.Direcciones = new ArrayList<>();
+//            usuario.Direcciones.add(new Direccion());
+//            model.addAttribute("Usuario", usuario);
+//            Result resultPais = paisDAOImplementation.GetAll();
+//            model.addAttribute("Paises", resultPais.Objects);
+//            
+//            return "UsuarioForm";
+//        } else {
+//            //EDITAR DIRECCION
+//            Result result = usuarioDAOImplementation.GetAddressById(IdUsuario,IdDireccion);
+//            model.addAttribute("Usuario", result.Object);
+//            Result resultPais = paisDAOImplementation.GetAll();
+//            model.addAttribute("Paises", resultPais.Objects);
+//            return "UsuarioForm";
+//        }
+//    
+//    }
     
     @PostMapping("formEditable")
     public String Form(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes){
     
         if(usuario.getIdUsuario()== 0){
             // AGREGAR USUARIO FULL INFO
-            
+            usuario.setStatus(1);
             ModelMapper modelMapper = new ModelMapper();
             OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
-            
-            //Result result2 = usuarioDAOImplementation.Add(usuario);
+
             Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
             
             if(result.Correct){
@@ -283,7 +255,6 @@ public class UsuarioController {
         }else if(usuario.Direcciones.get(0).getIdDireccion() == -1){
             
             //ACTUALIZAR INFORMACION BASICA USUARIO
-            //Result result = usuarioDAOImplementation.UpdateBasicById(usuario);
             Result result = usuarioJPADAOImplementation.UpdateBasicById(usuario);
             if(result.Correct){
                 result.Object = "El usuario se actualizo correctamente";
@@ -295,7 +266,6 @@ public class UsuarioController {
             
         }else if(usuario.Direcciones.get(0).getIdDireccion() == 0){
             //AGREGA UNA DIRECCION NUEVA
-            //Result result = usuarioDAOImplementation.AddAddressById(usuario);
             Result result = usuarioJPADAOImplementation.AddAddressById(usuario);
             if(result.Correct){
                 result.Object = "La direccion se agrego correctamente";
@@ -305,8 +275,8 @@ public class UsuarioController {
             redirectAttributes.addFlashAttribute("resultAddAddress", result);
             return "redirect:/Usuario/detail/"+usuario.getIdUsuario();
         }else{
-            //ACTUALIZA UNA DIRECCION
-            Result result = usuarioDAOImplementation.UpdateAddressById(usuario);            
+            //ACTUALIZA UNA DIRECCION           
+            Result result = usuarioJPADAOImplementation.UpdateAddressById(usuario);            
             if(result.Correct){
                 result.Object = "La direccion se actualizo correctamente";
             } else{
@@ -552,10 +522,11 @@ public class UsuarioController {
     @PostMapping("busqueda")
     public String Busqueda(@ModelAttribute("usuario") Usuario usuario, Model model){
         
-        Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
+        //Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
+        Result result = usuarioJPADAOImplementation.BusquedaUserWithAddress(usuario);
         
         if (!result.Correct) {
-            result = usuarioDAOImplementation.GetAll();
+            result = usuarioJPADAOImplementation.GetAll();
         }
         
         if (result.Objects == null || result.Objects.isEmpty()) {

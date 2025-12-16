@@ -11,7 +11,7 @@
     <body class="container my-5">
         <h3 class="mb-4 text-center">Registro de Usuario</h3>
         
-        <a th:href="${btnVolver}" class="btn btn-outline-secondary mb-4">
+        <a th:href="@{/Usuario}" class="btn btn-outline-secondary mb-4">
             <i class="bi bi-arrow-left"></i> Volver
         </a>
         
@@ -360,7 +360,7 @@
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-lg btn-primary w-100 fw-bold" th:classappend="${classBoton}" th:text="${textoBoton}"></button>
+            <button type="submit" class="btn btn-lg btn-success w-100 fw-bold">Agregar Usuario</button>
         </form>
         
         <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
