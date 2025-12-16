@@ -149,7 +149,7 @@ public class UsuarioController {
     @ResponseBody
     public Result ToggleStatus(@PathVariable("IdUsuario") int IdUsuario, @PathVariable("Status") int Status,RedirectAttributes redirectAttributes){
     
-        Result result = usuarioDAOImplementation.UpdateStatusById(IdUsuario, Status);
+        Result result = usuarioJPADAOImplementation.UpdateStatusById(IdUsuario, Status);
         
         redirectAttributes.addFlashAttribute("resultDeleteSoft", result);
         return result;
@@ -501,8 +501,14 @@ public class UsuarioController {
         
         if (usuarios != null && !usuarios.isEmpty()) {
             
-            //Intentamos la insercion
-            Result result = usuarioDAOImplementation.AddAll(usuarios);
+            List<OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario> usuariosJPA = new ArrayList<>();
+            for (Usuario usuario : usuarios) {
+                ModelMapper modelMapper = new ModelMapper();
+                OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
+                usuariosJPA.add(usuarioJPA);
+            }
+            
+            Result result = usuarioJPADAOImplementation.AddAll(usuariosJPA);
             sesion.removeAttribute("archivoCargaMasiva");
             
             if(result.Correct){
@@ -522,7 +528,6 @@ public class UsuarioController {
     @PostMapping("busqueda")
     public String Busqueda(@ModelAttribute("usuario") Usuario usuario, Model model){
         
-        //Result result = usuarioDAOImplementation.BusquedaUserWithAddress(usuario);
         Result result = usuarioJPADAOImplementation.BusquedaUserWithAddress(usuario);
         
         if (!result.Correct) {

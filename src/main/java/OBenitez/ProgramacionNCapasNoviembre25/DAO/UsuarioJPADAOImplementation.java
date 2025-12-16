@@ -5,6 +5,8 @@ import OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion;
 import OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Result;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -83,37 +85,43 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
     @Override
     public Result BusquedaUserWithAddress(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
         Result result = new Result();
+        
         ModelMapper modelMapper = new ModelMapper();
         try {
-            
-            TypedQuery<Usuario> query = entityManager.createQuery("FROM Usuario WHERE LOWER(Nombre) LIKE LOWER(:nombre) AND LOWER(ApellidoPaterno) LIKE LOWER(:apellidopaterno) AND LOWER(ApellidoMaterno) LIKE LOWER(:apellidomaterno) AND IdRol = (:idrol) ORDER BY IdUsuario ASC", Usuario.class);
-            query.setParameter("nombre", "%"+usuarioML.getNombre()+"%");
-            query.setParameter("apellidopaterno", "%"+usuarioML.getApellidoPaterno()+"%");
-            query.setParameter("apellidomaterno", "%"+usuarioML.getApellidoMaterno()+"%");
-            //Integer idRol = (usuarioML.Rol != null && usuarioML.Rol.getIdRol() != null) ? usuarioML.Rol.getIdRol() : -1;
-            query.setParameter("idrol", usuarioML.Rol.getIdRol());
+            StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("BusquedaUserWithAddress", Usuario.class)
+                .registerStoredProcedureParameter("pCursor", void.class, ParameterMode.REF_CURSOR)
+                .registerStoredProcedureParameter("pNombre", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("pApellidoPaterno", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("pApellidoMaterno", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("pIdRol", Integer.class, ParameterMode.IN);
+
+            query.setParameter("pNombre", usuarioML.getNombre());
+            query.setParameter("pApellidoPaterno", usuarioML.getApellidoPaterno());
+            query.setParameter("pApellidoMaterno", usuarioML.getApellidoMaterno());
+            Integer idRol = (usuarioML.Rol != null && usuarioML.Rol.getIdRol() != null) ? usuarioML.Rol.getIdRol() : -1;
+            query.setParameter("pIdRol", idRol);
+
             List<Usuario> usuariosJPA = query.getResultList();
             result.Objects = new ArrayList<>();
-            
+
             if (usuariosJPA.isEmpty()) {
                 result.Correct = false;
                 result.ErrorMessage = "No se encontraron usuarios";
                 return result;
             }
-            
+
             for (Usuario usuario : usuariosJPA) {
                 OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioLista = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario.class);
                 result.Objects.add(usuarioLista);
             }
-            
+
             result.Correct = true;
-            
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
         return result;
     }
     
@@ -146,6 +154,37 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         return result;
     }
 
+    @Override
+    @Transactional
+    public Result AddAll(List<Usuario> usuarios) {
+        Result result = new Result();
+        
+        try {
+            
+            for (Usuario usuario : usuarios) {
+                entityManager.persist(usuario);
+                entityManager.flush();
+
+                OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion direccion = new OBenitez.ProgramacionNCapasNoviembre25.JPA.Direccion();
+                direccion.setUsuario(usuario);
+                direccion.setCalle(usuario.getDirecciones().get(0).getCalle());
+                direccion.setNumeroInterior(usuario.getDirecciones().get(0).getNumeroInterior());
+                direccion.setNumeroExterior(usuario.getDirecciones().get(0).getNumeroExterior());
+                direccion.setColonia(usuario.getDirecciones().get(0).getColonia());
+
+                entityManager.persist(direccion);
+            }
+            
+            result.Correct = true;
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+    
     @Override
     @Transactional
     public Result AddAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML) {
@@ -245,6 +284,33 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         return result;
     }
 
+    @Override
+    @Transactional
+    public Result UpdateStatusById(Integer IdUsuario, Integer status) {
+        Result result = new Result();
+        
+        try {
+            
+            Usuario usuarioDB = entityManager.find(Usuario.class, IdUsuario);
+            if (usuarioDB == null) {
+                result.Correct = false;
+                result.ErrorMessage = "No se encontro al usuario";
+                return result;
+            }
+            
+            usuarioDB.setStatus(status);
+            entityManager.merge(usuarioDB);
+            
+            result.Correct = true;
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;        
+    }
+    
     /////DELETES
     @Override
     @Transactional
@@ -301,10 +367,5 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         }
         
         return result;
-    }
-
-    
-
-    
-    
+    }        
 }
