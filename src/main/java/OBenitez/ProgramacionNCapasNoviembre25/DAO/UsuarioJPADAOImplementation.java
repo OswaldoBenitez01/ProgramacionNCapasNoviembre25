@@ -21,10 +21,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
     @Autowired
     private EntityManager entityManager;
     
-//    @Autowired
-//    private ModelMapper modelMapper;
-    
-    
     ///GET Y BUSQUEDA
     @Override
     public Result GetAll() {
@@ -219,7 +215,6 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         
         return result;
     }
-    
     
     /////UPDATES
     @Override
