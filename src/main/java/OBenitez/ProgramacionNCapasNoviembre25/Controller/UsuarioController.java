@@ -6,7 +6,7 @@ import OBenitez.ProgramacionNCapasNoviembre25.DAO.EstadoDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.RolDAOImplementation;
-import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioDAOImplementation;
+//import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioJPADAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Colonia;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Direccion;
@@ -48,8 +48,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("Usuario")
 public class UsuarioController {
-    @Autowired
-    private UsuarioDAOImplementation usuarioDAOImplementation;
+//    @Autowired
+//    private UsuarioDAOImplementation usuarioDAOImplementation;
     @Autowired
     private RolDAOImplementation rolDAOImplementation;
     @Autowired
@@ -105,7 +105,10 @@ public class UsuarioController {
             model.addAttribute("Usuario", usuario);
             return "UsuarioForm";
         } else {
-            Result result = usuarioDAOImplementation.Add(usuario);
+            usuario.setStatus(1);
+            ModelMapper modelMapper = new ModelMapper();
+            OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
+            Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
             if (result.Correct) {
                 return "redirect:/Usuario";
             } else {
