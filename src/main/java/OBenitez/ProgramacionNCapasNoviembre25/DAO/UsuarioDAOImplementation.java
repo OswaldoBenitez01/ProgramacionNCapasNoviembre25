@@ -138,7 +138,7 @@ public class UsuarioDAOImplementation implements IUsuario{
         Result result = new Result();
         
         try{
-            result.Correct = jdbcTemplate.execute("{CALL AddUserWithAddress(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+            result.Correct = jdbcTemplate.execute("{CALL AddUserWithAddress(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
                 
                 //Usuario
                 callableStatement.setString(1, usuario.getNombre());
@@ -158,11 +158,13 @@ public class UsuarioDAOImplementation implements IUsuario{
                 callableStatement.setString(10, usuario.getTelefono());
                 callableStatement.setString(11, usuario.getCelular());
                 callableStatement.setString(12, usuario.getCurp());
+                callableStatement.setInt(13, usuario.getStatus());
+                callableStatement.setString(14, usuario.getImagen());
                 //Direccion
-                callableStatement.setString(13, usuario.Direcciones.get(0).getCalle());
-                callableStatement.setString(14, usuario.Direcciones.get(0).getNumeroInterior());
-                callableStatement.setString(15, usuario.Direcciones.get(0).getNumeroExterior());
-                callableStatement.setInt(16, usuario.Direcciones.get(0).Colonia.getIdColonia());
+                callableStatement.setString(15, usuario.Direcciones.get(0).getCalle());
+                callableStatement.setString(16, usuario.Direcciones.get(0).getNumeroInterior());
+                callableStatement.setString(17, usuario.Direcciones.get(0).getNumeroExterior());
+                callableStatement.setInt(18, usuario.Direcciones.get(0).Colonia.getIdColonia());
                 
                 callableStatement.executeUpdate();
                 return true;
@@ -705,6 +707,30 @@ public class UsuarioDAOImplementation implements IUsuario{
                 
                 callableStatement.setInt(1, IdUsuario);
                 callableStatement.setInt(2, status);
+                callableStatement.executeUpdate();
+                
+               return true; 
+            });
+            
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+
+    @Override
+    public Result UpdatePhoto(int IdUsuario, String Foto) {
+        Result result = new Result();
+        
+        try {
+            
+            result.Correct = jdbcTemplate.execute("{CALL UpdatePhoto(?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+                
+                callableStatement.setInt(1, IdUsuario);
+                callableStatement.setString(2, Foto);
                 callableStatement.executeUpdate();
                 
                return true; 

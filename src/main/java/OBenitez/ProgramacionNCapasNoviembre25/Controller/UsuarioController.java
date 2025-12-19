@@ -6,7 +6,7 @@ import OBenitez.ProgramacionNCapasNoviembre25.DAO.EstadoDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.MunicipioDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.PaisDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.RolDAOImplementation;
-//import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioDAOImplementation;
+import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioDAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.DAO.UsuarioJPADAOImplementation;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Colonia;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Direccion;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -48,8 +50,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("Usuario")
 public class UsuarioController {
-//    @Autowired
-//    private UsuarioDAOImplementation usuarioDAOImplementation;
+    @Autowired
+    private UsuarioDAOImplementation usuarioDAOImplementation;
     @Autowired
     private RolDAOImplementation rolDAOImplementation;
     @Autowired
@@ -95,26 +97,30 @@ public class UsuarioController {
     }
     
     @PostMapping("add")
-    public String Add(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model){
+    public String Add(Model model, @ModelAttribute("Usuario") Usuario usuario, @RequestParam("imagenUsuario") MultipartFile imagenUsuario, RedirectAttributes redirectAttributes) throws IOException{
         
-        if (bindingResult.hasErrors()) {
-            Result resultRol = rolDAOImplementation.GetALl();
-            model.addAttribute("Roles", resultRol.Objects);
-            Result resultPais = paisDAOImplementation.GetAll();
-            model.addAttribute("Paises", resultPais.Objects);
-            model.addAttribute("Usuario", usuario);
-            return "UsuarioForm";
+        // AGREGAR USUARIO FULL INFO
+        if (imagenUsuario.isEmpty()) {
+            usuario.setImagen(null);
         } else {
-            usuario.setStatus(1);
-            ModelMapper modelMapper = new ModelMapper();
-            OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
-            Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
-            if (result.Correct) {
-                return "redirect:/Usuario";
-            } else {
-                return "redirect:/Usuario/form";
-            }
+            String encodedString = Base64.getEncoder().encodeToString(imagenUsuario.getBytes());
+            usuario.setImagen(encodedString);
         }
+        usuario.setStatus(1);
+
+        ModelMapper modelMapper = new ModelMapper();
+        OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
+        Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
+
+        //Result result = usuarioDAOImplementation.Add(usuario);
+
+        if(result.Correct){
+            result.Object = "El usuario se agrego correctamente";
+        } else{
+            result.Object = "No fue posible agregar al usuario :c";
+        }
+        redirectAttributes.addFlashAttribute("resultAddUserFull", result);
+        return "redirect:/Usuario";
    
     }
     
@@ -156,6 +162,33 @@ public class UsuarioController {
         
         redirectAttributes.addFlashAttribute("resultDeleteSoft", result);
         return result;
+    }
+    
+    @PostMapping("/updatePhoto")
+    public String updatePhoto(@ModelAttribute Usuario usuario,
+                              @RequestParam("imagenUsuario") MultipartFile imagenUsuario,
+                              RedirectAttributes redirectAttributes) {
+
+        Result result = new Result();
+
+        try {
+            if (imagenUsuario.isEmpty()) {
+                result.Correct = false;
+                result.Object = "No se seleccionó ninguna imagen";
+            } else {
+                String encodedString = Base64.getEncoder().encodeToString(imagenUsuario.getBytes());
+                result = usuarioJPADAOImplementation.UpdatePhoto(usuario.getIdUsuario(), encodedString);
+                result.Object = result.Correct ? "Se actualizó correctamente la foto" : "No se pudo actualizar la foto :c";
+            }
+        } catch (IOException ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.Object = "No se pudo actualizar la foto :c";
+            result.ex = ex;
+        }
+
+        redirectAttributes.addFlashAttribute("resultUpdatePhoto", result);
+        return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
     }
     
     @GetMapping("deleteAddress/{IdDireccion}/{IdUsuario}")
@@ -239,23 +272,7 @@ public class UsuarioController {
     @PostMapping("formEditable")
     public String Form(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes){
     
-        if(usuario.getIdUsuario()== 0){
-            // AGREGAR USUARIO FULL INFO
-            usuario.setStatus(1);
-            ModelMapper modelMapper = new ModelMapper();
-            OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario usuarioJPA = modelMapper.map(usuario, OBenitez.ProgramacionNCapasNoviembre25.JPA.Usuario.class);
-
-            Result result = usuarioJPADAOImplementation.Add(usuarioJPA);
-            
-            if(result.Correct){
-                result.Object = "El usuario se agrego correctamente";
-            } else{
-                result.Object = "No fue posible agregar al usuario :c";
-            }
-            redirectAttributes.addFlashAttribute("resultAddUserFull", result);
-            return "redirect:/Usuario";
-            
-        }else if(usuario.Direcciones.get(0).getIdDireccion() == -1){
+        if(usuario.Direcciones.get(0).getIdDireccion() == -1){
             
             //ACTUALIZAR INFORMACION BASICA USUARIO
             Result result = usuarioJPADAOImplementation.UpdateBasicById(usuario);

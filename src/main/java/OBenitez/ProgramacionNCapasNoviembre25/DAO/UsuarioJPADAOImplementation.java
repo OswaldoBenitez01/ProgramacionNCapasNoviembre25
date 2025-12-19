@@ -234,6 +234,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
             
             Usuario usuarioJPA = modelMapper.map(usuarioML, Usuario.class);
             usuarioJPA.Direcciones = usuarioDB.Direcciones;
+            usuarioJPA.setImagen(usuarioDB.getImagen());
             entityManager.merge(usuarioJPA);
             
             result.Correct = true;
@@ -265,8 +266,7 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
             direccionDB.setNumeroExterior(usuarioML.Direcciones.get(0).getNumeroExterior());
             OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia colonia = entityManager.find(OBenitez.ProgramacionNCapasNoviembre25.JPA.Colonia.class, usuarioML.Direcciones.get(0).Colonia.getIdColonia());
             direccionDB.setColonia(colonia);
-//            entityManager.re
-//            entityManager.merge(direccionDB);
+            entityManager.merge(direccionDB);
             
             result.Correct = true;
             
@@ -304,6 +304,33 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         }
         
         return result;        
+    }
+    
+    @Override
+    @Transactional
+    public Result UpdatePhoto(Integer IdUsuario, String Foto) {
+        Result result = new Result();
+        
+        try {
+            
+            Usuario usuarioDB = entityManager.find(Usuario.class, IdUsuario);
+            if (usuarioDB == null) {
+                result.Correct = false;
+                result.ErrorMessage = "No se encontro al usuario";
+                return result;
+            }
+            
+            usuarioDB.setImagen(Foto);
+            entityManager.merge(usuarioDB);
+            
+            result.Correct = true;
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
     }
     
     /////DELETES
@@ -363,4 +390,5 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA{
         
         return result;
     }        
+
 }

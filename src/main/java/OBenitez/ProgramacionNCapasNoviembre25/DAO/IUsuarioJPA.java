@@ -18,6 +18,7 @@ public interface IUsuarioJPA {
     public Result UpdateBasicById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML);
     public Result UpdateAddressById(OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario usuarioML);
     public Result UpdateStatusById(Integer IdUsuario, Integer status);
+    public Result UpdatePhoto(Integer IdUsuario, String Foto);
     //DELETES
     public Result DeleteUserById(int IdUsuario);
     public Result DeleteAddressById(int IdDireccion);

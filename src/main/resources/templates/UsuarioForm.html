@@ -15,7 +15,7 @@
             <i class="bi bi-arrow-left"></i> Volver
         </a>
         
-        <form id="formUsuario"  method="post" th:object="${Usuario}" th:action="@{formEditable}">
+        <form id="formUsuario"  method="post" th:object="${Usuario}" th:action="@{add}" enctype="multipart/form-data">
             
             <input type="hidden" th:field="*{IdUsuario}">
             <input type="hidden" th:field="*{Direcciones[0].IdDireccion}">
@@ -31,6 +31,12 @@
                     </h4>
                 </div>
 
+                <div class="row">
+                    <div class="col">
+                        <input type="file" class="form-control" name="imagenUsuario">
+                    </div>
+                </div>
+                
                 <div class="row"> <!-- Nombre Usuario-->
                     <div class="col-md-4 mb-4">
                         <div class="form-floating">

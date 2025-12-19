@@ -62,6 +62,9 @@ public class Usuario {
     @Column(name = "status")
     private Integer Status;
     
+    @Column(name = "imagen")
+    private String Imagen;
+    
     @ManyToOne
     @JoinColumn(name = "idrol")
     public Rol Rol;
@@ -175,8 +178,14 @@ public class Usuario {
         this.Status = Status;
     }
 
-    
-    
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String Imagen) {
+        this.Imagen = Imagen;
+    }
+
     public Rol getRol() {
         return Rol;
     }

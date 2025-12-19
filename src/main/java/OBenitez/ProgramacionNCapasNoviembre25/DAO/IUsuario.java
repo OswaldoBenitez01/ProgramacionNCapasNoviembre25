@@ -18,6 +18,7 @@ public interface IUsuario {
     public Result DeleteById(int IdUsuario);
     public Result DeleteAddressById(int IdDireccion);
     public Result AddAll(List<Usuario> usuarios);
+    public Result UpdatePhoto(int IdUsuario, String Foto);
     //Busqueda
     public Result BusquedaUserWithAddress(Usuario usuario);
 }
