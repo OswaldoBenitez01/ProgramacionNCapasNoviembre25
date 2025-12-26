@@ -426,7 +426,7 @@
                                        id="inputImagenUsuario" 
                                        accept=".png, .jpeg, .jpg"
                                        aria-describedby="photoHelp">
-                                <button th:if="${Usuario.Imagen != null}" class="btn btn-danger" type="button" th:onclick=|"eliminarFoto(${"Usuario.IdUsaurio"})"|>
+                                <button th:if="${Usuario.Imagen != null}" class="btn btn-danger" type="button" th:onclick="|eliminarFoto(${Usuario.IdUsuario})|">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                                 <button class="btn btn-primary" type="submit">
@@ -474,7 +474,7 @@
             }
             
             function eliminarFoto(IdUsuario){
-                console.log(IdUsuario);
+                window.location.href = '/Usuario/deletePhoto/' + IdUsuario
             }
             
             document.getElementById('modalEditarDireccion').addEventListener('show.bs.modal', function(event) {

@@ -190,6 +190,24 @@ public class UsuarioController {
         redirectAttributes.addFlashAttribute("resultUpdatePhoto", result);
         return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
     }
+    @PostMapping("/deletePhoto")
+    public String deletePhoto(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
+
+        Result result = new Result();
+
+        try {
+            result = usuarioJPADAOImplementation.UpdatePhoto(usuario.getIdUsuario(), null);
+            result.Object = result.Correct ? "Se elimino correctamente la foto" : "No se pudo eliminar la foto :c";
+        } catch (Exception ex) {
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.Object = "No se pudo eliminar la foto :c";
+            result.ex = ex;
+        }
+
+        redirectAttributes.addFlashAttribute("resultUpdatePhoto", result);
+        return "redirect:/Usuario/detail/" + usuario.getIdUsuario();
+    }
     
     @GetMapping("deleteAddress/{IdDireccion}/{IdUsuario}")
     public String DeleteAddress(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes){
