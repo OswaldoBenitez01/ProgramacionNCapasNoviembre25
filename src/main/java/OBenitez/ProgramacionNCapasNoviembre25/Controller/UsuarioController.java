@@ -16,7 +16,6 @@ import OBenitez.ProgramacionNCapasNoviembre25.ML.Rol;
 import OBenitez.ProgramacionNCapasNoviembre25.ML.Usuario;
 import OBenitez.ProgramacionNCapasNoviembre25.Service.ValidationService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
